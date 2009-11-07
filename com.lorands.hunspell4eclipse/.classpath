@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/hunspell-linux-i386.jar"/>
+	<classpathentry kind="lib" path="lib/hunspell.jar" sourcepath="/tmp/hs/hunspell-1.1.12-2-java-13-bin/src"/>
+	<classpathentry kind="lib" path="lib/jna-linux-i386.jar"/>
+	<classpathentry kind="lib" path="lib/jna.jar"/>
+	<classpathentry kind="lib" path="lib/hunspell-darwin-i386.jar"/>
+	<classpathentry kind="lib" path="lib/hunspell-darwin-ppc.jar"/>
+	<classpathentry kind="lib" path="lib/hunspell-jws.jar"/>
+	<classpathentry kind="lib" path="lib/hunspell-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/hunspell-win32-x86.jar"/>
+	<classpathentry kind="lib" path="lib/jna-darwin.jar"/>
+	<classpathentry kind="lib" path="lib/jna-jws.jar"/>
+	<classpathentry kind="lib" path="lib/jna-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/jna-win32-x86.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
