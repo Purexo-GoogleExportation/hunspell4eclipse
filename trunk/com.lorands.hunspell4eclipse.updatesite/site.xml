@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.lorands.hunspell4eclipse_0.7.4.200911070844.jar" id="com.lorands.hunspell4eclipse" version="0.7.4.200911070844" os="linux,macosx,win32" ws="carbon,cocoa,gtk,win32"/>
+   <feature url="features/com.lorands.hunspell4eclipse_0.7.5.200911070848.jar" id="com.lorands.hunspell4eclipse" version="0.7.5.200911070848" os="linux,macosx,win32" ws="carbon,cocoa,gtk,win32">
+      <category name="com.lorands.hunspell4eclipse.category"/>
+   </feature>
+   <category-def name="com.lorands.hunspell4eclipse.category" label="Hunspell4Eclipse">
+      <description>
+         Hunspell-Eclipse integration
+      </description>
+   </category-def>
 </site>

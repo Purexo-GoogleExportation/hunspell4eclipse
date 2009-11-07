@@ -2,7 +2,7 @@
 <feature
       id="com.lorands.hunspell4eclipse"
       label="Hunspell4eclipse"
-      version="0.7.4.qualifier"
+      version="0.7.5.qualifier"
       provider-name="Lóránd Somogyi (http://lorands.com)"
       os="linux,macosx,win32"
       ws="carbon,cocoa,gtk,win32">
@@ -24,6 +24,10 @@ Included software:
 * Hunspell JNA Java bindings by Flemming Frandsen: 
  http://dren.dk/hunspell.html - published under LGPL.
    </license>
+
+   <url>
+      <update label="hunspell4eclipse updatesite" url="http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse.updatesite/"/>
+   </url>
 
    <requires>
       <import plugin="org.eclipse.ui"/>
