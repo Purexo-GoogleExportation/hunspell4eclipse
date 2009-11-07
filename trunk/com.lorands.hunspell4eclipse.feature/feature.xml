@@ -8,7 +8,8 @@
       ws="carbon,cocoa,gtk,win32">
 
    <description url="http://lorands.com/category/hunspell4eclipse">
-      Hunspell4Eclipse is an eclipse plug-in, that integrates Hunspell into Eclipse’s Spell Checking Service.
+      Hunspell4Eclipse is an eclipse plug-in, that integrates Hunspell
+into Eclipse’s Spell Checking Service.
    </description>
 
    <copyright url="http://lorands.com">
@@ -21,7 +22,7 @@
 that is licensed under LGPL (http://www.gnu.org/copyleft/lesser.html).
 Included software:
 * Hunspell JNA Java bindings by Flemming Frandsen: 
-	http://dren.dk/hunspell.html - published under LGPL.
+ http://dren.dk/hunspell.html - published under LGPL.
    </license>
 
    <requires>
