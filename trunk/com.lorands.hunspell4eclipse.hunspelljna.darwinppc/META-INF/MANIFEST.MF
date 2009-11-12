@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Hunspell for Darwin PPC
+Bundle-SymbolicName: com.lorands.hunspell4eclipse.hunspelljna.darwinppc
+Bundle-Version: 1.1.12
+Bundle-ClassPath: hunspell-darwin-ppc.jar,
+ jna-darwin.jar
+Bundle-Vendor: Lóránd Somogyi
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
+ J2SE-1.5
+Require-Bundle: com.lorands.hunspell4eclilpse.hunspelljna;bundle-version="1.1.12"
