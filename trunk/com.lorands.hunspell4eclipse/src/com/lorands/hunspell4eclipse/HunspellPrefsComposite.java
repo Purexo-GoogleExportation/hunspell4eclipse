@@ -25,6 +25,7 @@ public class HunspellPrefsComposite extends Composite {
 	private Text text = null;
 	private Button button = null;
 	private String dictPath = null; // @jve:decl-index=0:
+	private DefaultPreferenceOptions composite = null;
 
 	public HunspellPrefsComposite(Composite parent, int style) {
 		super(parent, style);
@@ -43,6 +44,7 @@ public class HunspellPrefsComposite extends Composite {
 		gridData.verticalAlignment = GridData.CENTER;
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
+		
 		label = new Label(this, SWT.NONE);
 		label.setText("Dictionary");
 		label.setLayoutData(gridData1);
@@ -67,6 +69,7 @@ public class HunspellPrefsComposite extends Composite {
 				});
 		this.setLayout(gridLayout);
 		// setSize(new Point(300, 200));
+		createComposite();
 	}
 
 	private String getDict() {
@@ -85,4 +88,62 @@ public class HunspellPrefsComposite extends Composite {
 	public String getDictPath() {
 		return dictPath;
 	}
+
+	/**
+	 * This method initializes composite	
+	 *
+	 */
+	private void createComposite() {
+		GridData gridData2 = new GridData();
+		gridData2.horizontalAlignment = GridData.FILL;
+		gridData2.grabExcessHorizontalSpace = false;
+		gridData2.horizontalSpan = 3;
+		gridData2.verticalAlignment = GridData.CENTER;
+		GridLayout gridLayout1 = new GridLayout();
+		gridLayout1.numColumns = 1;
+		composite = new DefaultPreferenceOptions(this, SWT.NONE);
+		composite.setLayout(gridLayout1);
+		composite.setLayoutData(gridData2);
+	}
+	
+	boolean isWWDigitsIgnored() {
+		return composite.isWWDigitsIgnored();
+	}
+	
+	boolean isWWMixedCaseIgnored() {
+		return composite.isWWMixedCaseIgnored();
+	}		
+	
+	boolean isUpperCase() {
+		return composite.isUpperCase();
+	}
+	
+	boolean isSingleLetter() {
+		return composite.isSingleLetter();
+	}
+	
+	boolean isWWNonLetters() {
+		return composite.isWWNonLetters();
+	}
+	
+	void setWWDigitsIgnored(boolean opt) {
+		composite.setWWDigitsIgnored(opt);
+	}
+	
+	void setWWMixedCaseIgnored(boolean opt) {
+		composite.setWWMixedCaseIgnored(opt);
+	}		
+	
+	void setUpperCase(boolean opt) {
+		composite.setUpperCase(opt);
+	}
+	
+	void setSingleLetter(boolean opt) {
+		composite.setSingleLetter(opt);
+	}
+	
+	void setWWNonLetters(boolean opt) {
+		composite.setWWNonLetters(opt);
+	}	
+	
 }

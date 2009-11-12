@@ -2,12 +2,19 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Hunspell4Eclipse
 Bundle-SymbolicName: com.lorands.hunspell4eclipse;singleton:=true
-Bundle-Version: 0.7.5.qualifier
+Bundle-Version: 0.8.0.qualifier
 Bundle-Activator: com.lorands.hunspell4eclipse.Activator
 Bundle-Vendor: Lóránd Somogyi (lorand dot somogyi at gmail dot com) - http://lorands.com
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.ui.workbench.texteditor
+ org.eclipse.ui.workbench.texteditor,
+ com.lorands.hunspell4eclilpse.hunspelljna;bundle-version="1.1.12",
+ com.lorands.hunspell4eclipse.hunspelljna.darwini386;bundle-version="1.1.12";resolution:=optional,
+ com.lorands.hunspell4eclipse.hunspelljna.darwinppc;bundle-version="1.1.12";resolution:=optional,
+ com.lorands.hunspell4eclipse.hunspelljna.jws;bundle-version="1.1.12";resolution:=optional,
+ com.lorands.hunspell4eclipse.hunspelljna.linuxamd64;bundle-version="1.1.12";resolution:=optional,
+ com.lorands.hunspell4eclipse.hunspelljna.linuxi386;bundle-version="1.1.12";resolution:=optional,
+ com.lorands.hunspell4eclipse.hunspelljna.win32;bundle-version="1.1.12";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: com.stibocatalog.hunspell,
@@ -19,19 +26,5 @@ Export-Package: com.lorands.hunspell4eclipse;
    org.eclipse.jface.resource,
    org.eclipse.ui.texteditor.spelling,
    org.eclipse.ui.plugin,
-   org.osgi.framework",
- com.stibocatalog.hunspell;uses:="com.sun.jna.ptr,javax.swing,com.sun.jna"
-Bundle-ClassPath: lib/hunspell-linux-i386.jar,
- lib/hunspell.jar,
- lib/jna-linux-i386.jar,
- lib/jna.jar,
- lib/hunspell-darwin-i386.jar,
- lib/hunspell-darwin-ppc.jar,
- lib/hunspell-jws.jar,
- lib/hunspell-linux-amd64.jar,
- lib/hunspell-win32-x86.jar,
- lib/jna-darwin.jar,
- lib/jna-jws.jar,
- lib/jna-linux-amd64.jar,
- lib/jna-win32-x86.jar,
- .
+   org.osgi.framework"
+Bundle-ClassPath: .

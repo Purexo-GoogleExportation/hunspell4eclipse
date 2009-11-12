@@ -57,6 +57,11 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 		if (dictPath != null) {
 			preferencesComp.setDictPath(dictPath);
 		}
+		
+		if( preferenceStore.contains(Activator.DEFAULT_OPTIONS)) {
+			intToOpts(preferenceStore.getInt(Activator.DEFAULT_OPTIONS)); 
+		}
+		
 
 		return preferencesComp;
 	}
@@ -104,9 +109,27 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 	 */
 	@Override
 	public void performOk() {
-		preferenceStore.setValue(Activator.DICTPATH, preferencesComp
-				.getDictPath());
+		preferenceStore.setValue(Activator.DICTPATH, preferencesComp.getDictPath());
+
+		preferenceStore.setValue(Activator.DEFAULT_OPTIONS, optsToInt());
 	}
+	
+	private int optsToInt() {
+		return ( preferencesComp.isSingleLetter() ? 1 : 0 ) 
+			+ (preferencesComp.isUpperCase() ? 2 : 0 )
+			+ (preferencesComp.isWWDigitsIgnored() ? 4 : 0)
+			+ (preferencesComp.isWWMixedCaseIgnored() ? 8 : 0 )
+			+ (preferencesComp.isWWNonLetters() ? 16 : 0 );
+	}
+	
+	private void intToOpts(int opt) {
+		preferencesComp.setSingleLetter((opt & 1) == 1);
+		preferencesComp.setUpperCase((opt & 2) == 2);
+		preferencesComp.setWWDigitsIgnored((opt & 4) == 4);
+		preferencesComp.setWWMixedCaseIgnored((opt & 8) == 8);
+		preferencesComp.setWWNonLetters((opt & 16) == 16);
+	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -119,6 +142,7 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 	public void performRevert() {
 		final String loadDict = preferenceStore.getString(Activator.DICTPATH);
 		preferencesComp.setDictPath(loadDict);
+		intToOpts(32-1); //all checked
 	}
 
 	/*

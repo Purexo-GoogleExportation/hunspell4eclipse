@@ -1,8 +1,13 @@
 package com.lorands.hunspell4eclipse;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import com.stibocatalog.hunspell.Hunspell;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -13,11 +18,16 @@ public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.lorands.hunspell4eclipse";
+	
+	public static final String SPELLENGINE_EXTENSION_POINT_ID = "com.lorands.hunspell4eclipse.content.governor";
 
 	public static final String DICTPATH = "DictPath";
+	public static final String DEFAULT_OPTIONS = "DefaultOptions";
 
 	// The shared instance
 	private static Activator plugin;
+
+	private Hunspell hunspell;
 
 	/**
 	 * The constructor
@@ -36,6 +46,10 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		Activator.plugin = this;
+		
+		hunspell = Hunspell.getInstance(); // init once!
+		
+		findGovernors();
 	}
 
 	/*
@@ -72,4 +86,46 @@ public class Activator extends AbstractUIPlugin {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
 				path);
 	}
+	
+	private void findGovernors() { //test purpose
+		IConfigurationElement[] configArray = Platform.getExtensionRegistry()
+			.getConfigurationElementsFor(SPELLENGINE_EXTENSION_POINT_ID);
+
+		for (IConfigurationElement config : configArray) {
+			System.out.println(String.format("%s [%s] (%s)", 
+					config.getAttribute("class"),
+					config.getAttribute("label"),
+					config.getAttribute("governsContentTypeId")
+			));
+		}
+	}
+	
+	/** Find suitable engine or return null.
+	 * @param id
+	 * @return
+	 */
+	public static AbstractHunSpellEngine findEngine(String id) { 
+		IConfigurationElement[] configArray = Platform.getExtensionRegistry()
+			.getConfigurationElementsFor(SPELLENGINE_EXTENSION_POINT_ID);
+
+		for (IConfigurationElement config : configArray) {
+			
+			if( config.getAttribute("governsContentTypeId").equals(id) ) {
+				try {
+					final AbstractHunSpellEngine engine = (AbstractHunSpellEngine) config.createExecutableExtension("class");
+					return engine;
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+		}
+		
+		return null;
+	}	
+	
+	public Hunspell getHunspell() {
+		return hunspell;
+	}
+	
 }

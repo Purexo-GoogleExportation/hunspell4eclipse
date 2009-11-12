@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="com.lorands.hunspell4eclipse.content.governor" name="contentGorvernor" schema="schema/com.lorands.hunspell4eclipse.content.governor.exsd"/>
    <extension
          point="org.eclipse.ui.workbench.texteditor.spellingEngine">
       <engine
