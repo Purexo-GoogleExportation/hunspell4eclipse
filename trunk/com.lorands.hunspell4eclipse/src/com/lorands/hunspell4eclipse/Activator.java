@@ -109,8 +109,12 @@ public class Activator extends AbstractUIPlugin {
 			.getConfigurationElementsFor(SPELLENGINE_EXTENSION_POINT_ID);
 
 		for (IConfigurationElement config : configArray) {
-			
-			if( config.getAttribute("governsContentTypeId").equals(id) ) {
+			IConfigurationElement[] contents = config.getChildren("contentType");
+			if(contents.length < 1 ) {
+				continue;
+			}
+			//System.out.println(config.getChildren("contentType")[0].getAttribute("governsContentTypeId"));
+			if( contents[0].getAttribute("governsContentTypeId").equals(id) ) {
 				try {
 					final AbstractHunSpellEngine engine = (AbstractHunSpellEngine) config.createExecutableExtension("class");
 					return engine;

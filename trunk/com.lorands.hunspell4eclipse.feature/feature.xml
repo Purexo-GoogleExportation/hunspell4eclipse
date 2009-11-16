@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="com.lorands.hunspell4eclipse"
+      id="com.lorands.hunspell4eclipse.feature"
       label="Hunspell4eclipse"
-      version="0.7.6.qualifier"
+      version="0.8.0.qualifier"
       provider-name="Lóránd Somogyi (http://lorands.com)"
       os="linux,macosx,win32"
       ws="carbon,cocoa,gtk,win32"
@@ -47,56 +47,16 @@ Included software:
          unpack="false"/>
 
    <plugin
-         id="com.lorands.hunspell4eclilpse.hunspelljna"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="com.lorands.hunspell4eclipse.hunspelljna.darwini386"
-         os="macosx"
-         arch="x86,x86_64"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="com.lorands.hunspell4eclipse.hunspelljna.darwinppc"
-         os="macosx"
-         arch="ppc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="com.lorands.hunspell4eclipse.hunspelljna.linuxamd64"
-         os="linux"
-         arch="x86_64"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="com.lorands.hunspell4eclipse.hunspelljna.linuxi386"
-         os="linux"
-         arch="x86"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="com.lorands.hunspell4eclipse.hunspelljna.win32"
-         os="win32"
-         arch="x86"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="com.lorands.hunspell4eclipse.javaSpell"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="com.lorands.hunspell4eclipse.hunspelljna"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

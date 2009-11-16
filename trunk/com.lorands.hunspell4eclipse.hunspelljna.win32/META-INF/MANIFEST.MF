@@ -8,4 +8,4 @@ Bundle-ClassPath: hunspell-win32-x86.jar,
 Bundle-Vendor: Lóránd Somogyi
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
  J2SE-1.5
-Require-Bundle: com.lorands.hunspell4eclilpse.hunspelljna;bundle-version="1.1.12"
+Require-Bundle: com.lorands.hunspell4eclipse.hunspelljna;bundle-version="1.1.12"

@@ -7,5 +7,5 @@ Bundle-ClassPath: hunspell-linux-amd64.jar,
  jna-linux-amd64.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
  J2SE-1.5
-Require-Bundle: com.lorands.hunspell4eclilpse.hunspelljna;bundle-version="1.1.12"
+Require-Bundle: com.lorands.hunspell4eclipse.hunspelljna;bundle-version="1.1.12"
 Bundle-Vendor: Lóránd Somogyi
