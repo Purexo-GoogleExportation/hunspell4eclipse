@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.lorands.hunspell4eclipse_0.7.5.200911070944.jar" id="com.lorands.hunspell4eclipse" version="0.7.5.200911070944" os="linux,macosx,win32" ws="carbon,cocoa,gtk,win32">
+   <description name="Hunspell4Eclipse">
+      Hunspell4Eclipse
+   </description>
+   <feature url="features/com.lorands.hunspell4eclipse.jna.feature_1.1.12.200911152201.jar" id="com.lorands.hunspell4eclipse.jna.feature" version="1.1.12.200911152201">
+      <category name="com.lorands.hunspell4eclipse.jnabindings.category"/>
+   </feature>
+   <feature url="features/com.lorands.hunspell4eclipse.feature_0.8.0.200911152201.jar" id="com.lorands.hunspell4eclipse.feature" version="0.8.0.200911152201" os="linux,macosx,win32" ws="carbon,cocoa,gtk,win32" arch="ppc,x86,x86_64">
       <category name="com.lorands.hunspell4eclipse.category"/>
    </feature>
    <category-def name="com.lorands.hunspell4eclipse.category" label="Hunspell4Eclipse">
       <description>
          Hunspell-Eclipse integration
+      </description>
+   </category-def>
+   <category-def name="com.lorands.hunspell4eclipse.jnabindings.category" label="Hunspell4Eclipse JNA Bindings">
+      <description>
+         Hunspell4Eclipse JNA Bindings
       </description>
    </category-def>
 </site>
