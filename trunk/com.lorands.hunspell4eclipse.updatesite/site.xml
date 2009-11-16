@@ -3,10 +3,10 @@
    <description name="Hunspell4Eclipse">
       Hunspell4Eclipse
    </description>
-   <feature url="features/com.lorands.hunspell4eclipse.jna.feature_1.1.12.200911152201.jar" id="com.lorands.hunspell4eclipse.jna.feature" version="1.1.12.200911152201">
+   <feature url="features/com.lorands.hunspell4eclipse.jna.feature_1.1.12.200911162058.jar" id="com.lorands.hunspell4eclipse.jna.feature" version="1.1.12.200911162058">
       <category name="com.lorands.hunspell4eclipse.jnabindings.category"/>
    </feature>
-   <feature url="features/com.lorands.hunspell4eclipse.feature_0.8.0.200911152201.jar" id="com.lorands.hunspell4eclipse.feature" version="0.8.0.200911152201" os="linux,macosx,win32" ws="carbon,cocoa,gtk,win32" arch="ppc,x86,x86_64">
+   <feature url="features/com.lorands.hunspell4eclipse.feature_0.8.0.200911162058.jar" id="com.lorands.hunspell4eclipse.feature" version="0.8.0.200911162058" os="linux,macosx,win32" ws="carbon,cocoa,gtk,win32" arch="ppc,x86,x86_64">
       <category name="com.lorands.hunspell4eclipse.category"/>
    </feature>
    <category-def name="com.lorands.hunspell4eclipse.category" label="Hunspell4Eclipse">
