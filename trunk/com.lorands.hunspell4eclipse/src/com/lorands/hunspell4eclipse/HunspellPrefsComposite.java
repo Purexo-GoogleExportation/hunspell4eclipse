@@ -82,7 +82,7 @@ public class HunspellPrefsComposite extends Composite {
 		createComposite();
 		
 		lTreshold = new Label(this, SWT.NONE);
-		lTreshold.setText("Treshold");
+		lTreshold.setText("Threshold");
 		lTreshold.setLayoutData(gridData1);
 		tThreshold = new Text(this, SWT.BORDER);
 		tThreshold.setText("100");
