@@ -1,0 +1,12 @@
+#summary Hunspell4Eclipse news
+#labels Featured
+
+= New version out: 0.8.2 =
+
+*Jan 16.*
+
+Just released a new beta version: 0.8.2 
+
+Update site back to normal. (http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse.updatesite)
+
+
