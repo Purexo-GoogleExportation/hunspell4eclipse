@@ -3,6 +3,8 @@
  */
 package com.lorands.hunspell4eclipse;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
@@ -66,6 +68,13 @@ public final class HunspellingProblem extends SpellingProblem {
 	@Override
 	public ICompletionProposal[] getProposals() {
 		return proposals;
+	}
+	
+	@Override
+	public String toString() {
+		return "HunspellingProblem [length=" + length + ", offset=" + offset
+				+ ", message=" + message + ", proposals="
+				+ Arrays.toString(proposals) + "]";
 	}
 
 }

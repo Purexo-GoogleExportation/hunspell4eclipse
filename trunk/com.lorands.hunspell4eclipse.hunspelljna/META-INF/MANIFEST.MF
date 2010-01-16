@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Hunspell JNA Core
 Bundle-SymbolicName: com.lorands.hunspell4eclipse.hunspelljna
-Bundle-Version: 1.1.12
+Bundle-Version: 1.1.12.qualifier
 Bundle-ClassPath: hunspell.jar,
  jna.jar
 Bundle-Vendor: Lóránd Somogyi

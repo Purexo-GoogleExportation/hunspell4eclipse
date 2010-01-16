@@ -24,6 +24,8 @@ public class Activator extends AbstractUIPlugin {
 	public static final String DICTPATH = "DictPath";
 	public static final String DEFAULT_OPTIONS = "DefaultOptions";
 
+	public static final String THRESHOLD = "Threshold";
+
 	// The shared instance
 	private static Activator plugin;
 

@@ -2,19 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Hunspell4Eclipse
 Bundle-SymbolicName: com.lorands.hunspell4eclipse;singleton:=true
-Bundle-Version: 0.8.0.qualifier
+Bundle-Version: 0.8.1.qualifier
 Bundle-Activator: com.lorands.hunspell4eclipse.Activator
 Bundle-Vendor: Lóránd Somogyi (lorand dot somogyi at gmail dot com) - http://lorands.com
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.ui.workbench.texteditor,
- com.lorands.hunspell4eclipse.hunspelljna;bundle-version="1.1.12",
- com.lorands.hunspell4eclipse.hunspelljna.darwini386;bundle-version="1.1.12";resolution:=optional,
- com.lorands.hunspell4eclipse.hunspelljna.darwinppc;bundle-version="1.1.12";resolution:=optional,
- com.lorands.hunspell4eclipse.hunspelljna.jws;bundle-version="1.1.12";resolution:=optional,
- com.lorands.hunspell4eclipse.hunspelljna.linuxamd64;bundle-version="1.1.12";resolution:=optional,
- com.lorands.hunspell4eclipse.hunspelljna.linuxi386;bundle-version="1.1.12";resolution:=optional,
- com.lorands.hunspell4eclipse.hunspelljna.win32;bundle-version="1.1.12";resolution:=optional
+ org.eclipse.ui.workbench.texteditor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: com.stibocatalog.hunspell,

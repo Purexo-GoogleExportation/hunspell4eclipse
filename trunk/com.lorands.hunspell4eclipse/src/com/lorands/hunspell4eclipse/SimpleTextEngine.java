@@ -21,4 +21,9 @@ public final class SimpleTextEngine extends AbstractHunSpellEngine {
 
 			checkInner(document, regions, context, collector, monitor);
 	}
+
+	@Override
+	public ICompletionProposalCreator getCompletionProposalCreator() {
+		return null;
+	}
 }

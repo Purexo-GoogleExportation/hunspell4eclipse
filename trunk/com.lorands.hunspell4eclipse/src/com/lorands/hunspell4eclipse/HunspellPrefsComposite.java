@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * 
@@ -21,11 +22,14 @@ import org.eclipse.swt.widgets.Text;
  */
 public class HunspellPrefsComposite extends Composite {
 
-	private Label label = null;
+	private Label lDictionary = null;
+	private Label lTreshold = null;
 	private Text text = null;
+	private Text tThreshold = null;
 	private Button button = null;
 	private String dictPath = null; // @jve:decl-index=0:
 	private DefaultPreferenceOptions composite = null;
+	private int threshold;
 
 	public HunspellPrefsComposite(Composite parent, int style) {
 		super(parent, style);
@@ -33,8 +37,14 @@ public class HunspellPrefsComposite extends Composite {
 	}
 
 	private void initialize() {
+		this.setSize(new Point(286, 261));
+		GridData gridData11 = new GridData();
+		gridData11.horizontalAlignment = GridData.FILL;
+		gridData11.verticalAlignment = GridData.CENTER;
 		final GridData gridData1 = new GridData();
-		gridData1.grabExcessHorizontalSpace = false;
+		gridData1.grabExcessHorizontalSpace = true;
+		gridData1.horizontalAlignment = GridData.CENTER;
+		gridData1.verticalAlignment = GridData.CENTER;
 		final GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -45,17 +55,17 @@ public class HunspellPrefsComposite extends Composite {
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
 		
-		label = new Label(this, SWT.NONE);
-		label.setText("Dictionary");
-		label.setLayoutData(gridData1);
-		text = new Text(this, SWT.BORDER);
 		if (dictPath == null) {
-			text.setText("Select dictionary");
 		} else {
 			text.setText(dictPath);
 		}
-		text.setEditable(false);
+		lDictionary = new Label(this, SWT.NONE);
+		lDictionary.setText("Dictionary");
+		lDictionary.setLayoutData(gridData1);
+		text = new Text(this, SWT.BORDER);
+		text.setText("Select dictionary");
 		text.setLayoutData(gridData);
+		text.setEditable(false);
 		button = new Button(this, SWT.NONE);
 		button.setText("Browse...");
 		button
@@ -70,6 +80,18 @@ public class HunspellPrefsComposite extends Composite {
 		this.setLayout(gridLayout);
 		// setSize(new Point(300, 200));
 		createComposite();
+		
+		lTreshold = new Label(this, SWT.NONE);
+		lTreshold.setText("Treshold");
+		lTreshold.setLayoutData(gridData1);
+		tThreshold = new Text(this, SWT.BORDER);
+		tThreshold.setText("100");
+		tThreshold.setLayoutData(gridData11);
+		tThreshold.addModifyListener(new org.eclipse.swt.events.ModifyListener() {
+			public void modifyText(org.eclipse.swt.events.ModifyEvent e) {
+				threshold = Integer.valueOf(tThreshold.getText());
+			}
+		});
 	}
 
 	private String getDict() {
@@ -87,6 +109,15 @@ public class HunspellPrefsComposite extends Composite {
 
 	public String getDictPath() {
 		return dictPath;
+	}
+	
+	public int getThreshold() {
+		return threshold;
+	}
+	
+	public void setThreshold(int th) {
+		this.threshold = th;
+		tThreshold.setText(Integer.toString(th));
 	}
 
 	/**
@@ -146,4 +177,4 @@ public class HunspellPrefsComposite extends Composite {
 		composite.setWWNonLetters(opt);
 	}	
 	
-}
+}  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -58,6 +58,11 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 			preferencesComp.setDictPath(dictPath);
 		}
 		
+		final int threshold = preferenceStore.getInt(Activator.THRESHOLD);
+		if( threshold != 0 ) {
+			preferencesComp.setThreshold(threshold);
+		}
+		
 		if( preferenceStore.contains(Activator.DEFAULT_OPTIONS)) {
 			intToOpts(preferenceStore.getInt(Activator.DEFAULT_OPTIONS)); 
 		}
@@ -110,7 +115,7 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 	@Override
 	public void performOk() {
 		preferenceStore.setValue(Activator.DICTPATH, preferencesComp.getDictPath());
-
+		preferenceStore.setValue(Activator.THRESHOLD, preferencesComp.getThreshold());
 		preferenceStore.setValue(Activator.DEFAULT_OPTIONS, optsToInt());
 	}
 	
