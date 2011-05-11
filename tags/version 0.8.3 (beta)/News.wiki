@@ -1,0 +1,27 @@
+#summary Hunspell4Eclipse news
+#labels Featured
+
+
+= New version out: 0.8.3 =
+
+*mai 11 2011.*
+
+Just released the beta version: 0.8.3 
+
+The update site remains the same. (http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse.updatesite)
+
+ * includes JNA 3.2.7  (plugin validated on Mac Os X1.6.7 64bits, Windows XP SP3 32bits and Ubuntu 10.04 LTS 64bits)
+ * corrects a bug in the method which build the native library name
+ * corrects the implementation of the rule "WWMixedCaseIgnored"  
+ * corrects the error which appears when the JDT editor try to instanciate the class associated to the extension point the "javaCompletionProposalComputer"
+ * changes the spliting method to use a BreakIterator
+
+= New version out: 0.8.2 =
+
+*Jan 16 2010.*
+
+Just released a new beta version: 0.8.2 
+
+Update site back to normal. (http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse.updatesite)
+
+
