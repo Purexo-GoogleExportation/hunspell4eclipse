@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="com.lorands.hunspell4eclipse.content.governor">
+      <governor
+            class="com.lorands.hunspell4eclipse.javaspell.JavaSpellEngine"
+            governsContentTypeId="org.eclipse.jdt.core.javaSource"
+            label="Java Spell"
+            nameFilter="*.java">
+         <contentType
+               governsContentTypeId="org.eclipse.jdt.core.javaSource">
+         </contentType>
+      </governor>
+   </extension>
+   <extension
+         id="id1"
+         point="org.eclipse.jdt.ui.javaCompletionProposalComputer">
+      <javaCompletionProposalComputer
+            activate="true"
+            categoryId="org.eclipse.jdt.ui.defaultProposalCategory"
+            class="com.lorands.hunspell4eclipse.javaspell.JavaHunspellCompletionProposalComputer">
+      </javaCompletionProposalComputer>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.quickFixProcessors">
+      <quickFixProcessor
+            class="com.lorands.hunspell4eclipse.javaspell.HunspellQuickFixProcessor"
+            id="com.lorands.hunspell4eclipse.javaSpell.quickFixProcessor1"
+            name="HunspellQuickFixProcessor">
+         <handledMarkerTypes>
+            <markerType
+                  id="com.lorands.hunspell4eclipse.javaSpell.markerType1">
+            </markerType>
+         </handledMarkerTypes>
+      </quickFixProcessor>
+   </extension>
+
+</plugin>
