@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.lorands.hunspell4eclipse.feature"
+      label="Hunspell4Eclipse"
+      version="0.8.3.qualifier"
+      provider-name="Lóránd Somogyi (http://lorands.com)"
+      os="linux,macosx,win32"
+      ws="carbon,cocoa,gtk,win32"
+      arch="ppc,x86,x86_64">
+
+   <description url="http://lorands.com/category/hunspell4eclipse">
+      Hunspell4Eclipse is an eclipse plug-in, that integrates Hunspell into Eclipse’s Spell Checking Service.
+   </description>
+
+   <copyright url="http://lorands.com">
+      © Lóránd Somogyi (lorand dot somogyi at gmail dot com) - http://lorands.com
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      This software is lincensed under Eclipse Public Lincese v 1.0
+(http://www.eclipse.org/legal/epl-v10.html), but includes software
+that is licensed under LGPL (http://www.gnu.org/copyleft/lesser.html).
+Included software:
+* Hunspell JNA Java bindings by Flemming Frandsen: 
+http://dren.dk/hunspell.html - published under LGPL.
+* JNA 
+http://http://jna.java.net/ - published under LGPL.
+   </license>
+
+   <url>
+      <update label="hunspell4eclipse updatesite" url="http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse.updatesite/"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+   </requires>
+
+   <plugin
+         id="com.lorands.hunspell4eclipse"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.lorands.hunspell4eclipse.javaSpell"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.lorands.hunspell4eclipse.hunspelljna"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
