@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Hunspell4Eclipse" topic="html/maintopic.html">
+	<topic label="About"  href="html/maintopic.html"> 
+	</topic>
+	<topic href="html/install.html" label="Install">
+ </topic>
+</toc>
