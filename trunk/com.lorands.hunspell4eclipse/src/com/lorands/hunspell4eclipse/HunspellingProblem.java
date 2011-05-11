@@ -8,15 +8,18 @@ import java.util.Arrays;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
-/** SpelligProblem implementation for Hunspell.  Just a minimal implementation, nothing to see here.
- * @author Lorand Somogyi
+/**
+ * SpelligProblem implementation for Hunspell. Just a minimal implementation,
+ * nothing to see here.
  * 
+ * @author L—r‡nd Somogyi < lorand dot somogyi at gmail dot com >
+ *         http://lorands.com *
  */
 public final class HunspellingProblem extends SpellingProblem {
 
-	private final int offset;
 	private final int length;
 	private final String message;
+	private final int offset;
 	private final ICompletionProposal[] proposals;
 
 	/**
@@ -69,7 +72,7 @@ public final class HunspellingProblem extends SpellingProblem {
 	public ICompletionProposal[] getProposals() {
 		return proposals;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "HunspellingProblem [length=" + length + ", offset=" + offset

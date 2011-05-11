@@ -7,64 +7,65 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import com.stibocatalog.hunspell.CLog;
 import com.stibocatalog.hunspell.Hunspell;
 
 /**
  * The activator class controls the plug-in life cycle
  * 
- * @author Lorand Somogyi
+ * @author L—r‡nd Somogyi < lorand dot somogyi at gmail dot com >
+ *         http://lorands.com
  */
 public class Activator extends AbstractUIPlugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "com.lorands.hunspell4eclipse";
-	
-	public static final String SPELLENGINE_EXTENSION_POINT_ID = "com.lorands.hunspell4eclipse.content.governor";
-
-	public static final String DICTPATH = "DictPath";
 	public static final String DEFAULT_OPTIONS = "DefaultOptions";
 
-	public static final String THRESHOLD = "Threshold";
+	public static final String DICTPATH = "DictPath";
 
 	// The shared instance
 	private static Activator plugin;
 
-	private Hunspell hunspell;
+	// The plug-in ID
+	public static final String PLUGIN_ID = "com.lorands.hunspell4eclipse";
+
+	public static final String SPELLENGINE_EXTENSION_POINT_ID = "com.lorands.hunspell4eclipse.content.governor";
+
+	public static final String THRESHOLD = "Threshold";
 
 	/**
-	 * The constructor
-	 */
-	public Activator() {
-	}
-
-	/*
-	 * (non-Javadoc)
+	 * Find suitable engine or return null.
 	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-	 * )
+	 * @param id
+	 * @return
 	 */
-	@Override
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		Activator.plugin = this;
-		
-		hunspell = Hunspell.getInstance(); // init once!
-		
-		findGovernors();
-	}
+	public static AbstractHunSpellEngine findEngine(String id) {
+		IConfigurationElement[] configArray = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(SPELLENGINE_EXTENSION_POINT_ID);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-	 * )
-	 */
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		Activator.plugin = null;
-		super.stop(context);
+		for (IConfigurationElement config : configArray) {
+			IConfigurationElement[] contents = config
+					.getChildren("contentType");
+			if (contents.length < 1) {
+				continue;
+			}
+			// System.out.println(config.getChildren("contentType")[0].getAttribute("governsContentTypeId"));
+			if (contents[0].getAttribute("governsContentTypeId").equals(id)) {
+				try {
+					final AbstractHunSpellEngine engine = (AbstractHunSpellEngine) config
+							.createExecutableExtension("class");
+					return engine;
+				} catch (CoreException e) {
+					CLog.logErr(
+							Activator.class,
+							"findEngine",
+							e,
+							"Unable to instanciate engine matching the extension point [%s]. id=[%s]",
+							SPELLENGINE_EXTENSION_POINT_ID, id);
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -88,50 +89,91 @@ public class Activator extends AbstractUIPlugin {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
 				path);
 	}
-	
-	private void findGovernors() { //test purpose
+
+	private Hunspell hunspell;
+
+	/**
+	 * The constructor
+	 */
+	public Activator() {
+		super();
+	}
+
+	/**
+	 * 
+	 */
+	private void findGovernors() {
+		// test purpose
 		IConfigurationElement[] configArray = Platform.getExtensionRegistry()
-			.getConfigurationElementsFor(SPELLENGINE_EXTENSION_POINT_ID);
+				.getConfigurationElementsFor(SPELLENGINE_EXTENSION_POINT_ID);
 
 		for (IConfigurationElement config : configArray) {
-			System.out.println(String.format("%s [%s] (%s)", 
-					config.getAttribute("class"),
-					config.getAttribute("label"),
-					config.getAttribute("governsContentTypeId")
-			));
+
+			CLog.logOut(this, "findGovernors",
+					"Class=[%s] Label=[%s] ContentTypeId=[%s]",
+					config.getAttribute("class"), config.getAttribute("label"),
+					config.getAttribute("governsContentTypeId"));
 		}
 	}
-	
-	/** Find suitable engine or return null.
-	 * @param id
+
+	/**
 	 * @return
 	 */
-	public static AbstractHunSpellEngine findEngine(String id) { 
-		IConfigurationElement[] configArray = Platform.getExtensionRegistry()
-			.getConfigurationElementsFor(SPELLENGINE_EXTENSION_POINT_ID);
-
-		for (IConfigurationElement config : configArray) {
-			IConfigurationElement[] contents = config.getChildren("contentType");
-			if(contents.length < 1 ) {
-				continue;
-			}
-			//System.out.println(config.getChildren("contentType")[0].getAttribute("governsContentTypeId"));
-			if( contents[0].getAttribute("governsContentTypeId").equals(id) ) {
-				try {
-					final AbstractHunSpellEngine engine = (AbstractHunSpellEngine) config.createExecutableExtension("class");
-					return engine;
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}	
-			}
-		}
-		
-		return null;
-	}	
-	
 	public Hunspell getHunspell() {
 		return hunspell;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
+	 * )
+	 */
+	@Override
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		Activator.plugin = this;
+
+		// init once!
+		hunspell = Hunspell.getInstance();
+
+		// diagnose (activated if the "hunspell.log.on" system
+		// property is defined).
+		if (CLog.on()) {
+			String wName = "???";
+			String wVersion = "???";
+			if (getBundle() != null) {
+				wName = getBundle().getSymbolicName();
+				wVersion = getBundle().getVersion().toString();
+			}
+			CLog.logOut(this, "start", "Bundle [%s] Version=[%s] started",
+					wName, wVersion);
+
+			// for test
+			findGovernors();
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
+	 * )
+	 */
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		Activator.plugin = null;
+		super.stop(context);
+
+		// diagnose (activated if the "hunspell.log.on" system
+		// property is defined).
+		if (CLog.on())
+			CLog.logOut(this, "stop", "Bundle [%s] stopped", context
+					.getBundle().getSymbolicName());
+
+	}
+
 }

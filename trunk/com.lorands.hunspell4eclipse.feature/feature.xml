@@ -2,15 +2,14 @@
 <feature
       id="com.lorands.hunspell4eclipse.feature"
       label="Hunspell4Eclipse"
-      version="0.8.2.qualifier"
+      version="0.8.3.qualifier"
       provider-name="Lóránd Somogyi (http://lorands.com)"
       os="linux,macosx,win32"
       ws="carbon,cocoa,gtk,win32"
       arch="ppc,x86,x86_64">
 
    <description url="http://lorands.com/category/hunspell4eclipse">
-      Hunspell4Eclipse is an eclipse plug-in, that integrates Hunspell
-into Eclipse’s Spell Checking Service.
+      Hunspell4Eclipse is an eclipse plug-in, that integrates Hunspell into Eclipse’s Spell Checking Service.
    </description>
 
    <copyright url="http://lorands.com">
@@ -23,7 +22,9 @@ into Eclipse’s Spell Checking Service.
 that is licensed under LGPL (http://www.gnu.org/copyleft/lesser.html).
 Included software:
 * Hunspell JNA Java bindings by Flemming Frandsen: 
- http://dren.dk/hunspell.html - published under LGPL.
+http://dren.dk/hunspell.html - published under LGPL.
+* JNA 
+http://http://jna.java.net/ - published under LGPL.
    </license>
 
    <url>
@@ -56,6 +57,7 @@ Included software:
          id="com.lorands.hunspell4eclipse.hunspelljna"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

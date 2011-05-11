@@ -16,18 +16,24 @@ import org.eclipse.ui.texteditor.spelling.ISpellingEngine;
 import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
 
+import com.stibocatalog.hunspell.CLog;
 import com.stibocatalog.hunspell.Hunspell;
 import com.stibocatalog.hunspell.Hunspell.Dictionary;
 
-/** Spell checking engine. 
+/**
+ * Spell checking engine.
  * 
- * @author Lorand Somogyi
- * 
+ * @author L—r‡nd Somogyi < lorand dot somogyi at gmail dot com >
+ *         http://lorands.com
+ * @author Olivier Gattaz < olivier dot gattaz at isandlatech dot com >
+ * @date 28/04/2011 (dd/mm/yy)
  */
 public class Engine implements ISpellingEngine {
 
-	private Dictionary dictionary;
+	private static String NO_DICTIONARY_SELECTED_INFO = "Pleases select a dictionray in Preferences > General > Editors > Text Editors > Spelling.";
+	private static String NO_DICTIONARY_SELECTED_TITLE = "No dictionary selected";
 
+	private Dictionary dictionary;
 	private boolean initOk = false;
 
 	/**
@@ -36,68 +42,46 @@ public class Engine implements ISpellingEngine {
 	 * 
 	 */
 	public Engine() throws FileNotFoundException, UnsupportedEncodingException {
+
 		final IPreferenceStore preferenceStore = Activator.getDefault()
 				.getPreferenceStore();
 
 		final String dictPath = preferenceStore.getString(Activator.DICTPATH);
 		if (dictPath == null || dictPath.isEmpty()) {
-			MessageDialog
-					.openError(
-							Activator.getDefault().getWorkbench()
-									.getActiveWorkbenchWindow().getShell(),
-							"No dictionary selected",
-							"Pleases select a dictionray in Window > Preferences > General > Editors > Text Editors > Spelling.");
+
+			// log in StdErr
+			CLog.logErr(this, CLog.LIB_CONSTRUCTOR, "%s\näs",
+					NO_DICTIONARY_SELECTED_TITLE, NO_DICTIONARY_SELECTED_INFO);
+
+			// ask the user !
+			MessageDialog.openError(Activator.getDefault().getWorkbench()
+					.getActiveWorkbenchWindow().getShell(),
+					NO_DICTIONARY_SELECTED_TITLE, NO_DICTIONARY_SELECTED_INFO);
+
 			initOk = false;
 		} else {
 			final Hunspell hunspell = Activator.getDefault().getHunspell();
-			final String dictPerfix = dictPath.substring(0, dictPath.lastIndexOf('.'));
-			dictionary = hunspell.getDictionary(dictPerfix); // "/usr/share/myspell/dicts/hu_HU"
+
+			final boolean wHasExt = dictPath.indexOf('.') > -1;
+
+			final String dictPrefix = (wHasExt) ? dictPath.substring(0,
+					dictPath.lastIndexOf('.')) : dictPath;
+			// "/usr/share/myspell/dicts/hu_HU"
+			// "/Users/ogattaz/Library/Spelling/fr"
+			dictionary = hunspell.getDictionary(dictPrefix);
 			initOk = true;
 		}
 	}
-	
-	private void traverseContentType(int d, IContentType contentType) { //just for test
-		StringBuilder sb = new StringBuilder();
-		for( int i=0; i <= d; i++ ) {
-			sb.append("\t");
-		}
-		sb.append(contentType.getId());
-		System.out.println(sb.toString());
-		IContentType baseType = contentType.getBaseType();
-		if( baseType != null) {
-			traverseContentType(d+1, baseType);
-		}
-	}
-	
-	/** Find spell engine or return null. Try to find most suitable spell engine, 
-	 * which means if not found for the given content type try it's parent, and so on.
-	 * If none found, will return null, which would mean use the default text one.
-	 * 
-	 * @param contentType
-	 * @return
-	 */
-	private AbstractHunSpellEngine findContentProvider(IContentType contentType) {
-		String id = contentType.getId();
-		/*
-		 * org.eclipse.core.runtime.text
-			org.eclipse.jdt.core.javaSource
-			org.eclipse.core.runtime.xml
-		 */
-		AbstractHunSpellEngine engine = Activator.findEngine(id);
-		if( engine == null ) {
-			IContentType baseType = contentType.getBaseType();
-			if( baseType != null) {
-				findContentProvider(baseType);
-			}
-		} else {
-			return engine;
-		}
-		
-		return null;
-	}	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.spelling.ISpellingEngine#check(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion[], org.eclipse.ui.texteditor.spelling.SpellingContext, org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.texteditor.spelling.ISpellingEngine#check(org.eclipse.
+	 * jface.text.IDocument, org.eclipse.jface.text.IRegion[],
+	 * org.eclipse.ui.texteditor.spelling.SpellingContext,
+	 * org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void check(IDocument document, IRegion[] regions,
@@ -107,17 +91,70 @@ public class Engine implements ISpellingEngine {
 			return;
 		}
 
-		//find spell engine for contet
+		// find spell engine for contet
 		IContentType contentType = context.getContentType();
+
+		// diagnose (activated if the "hunspell.log.on" system
+		// property is defined).
+		if (CLog.on())
+			CLog.logOut(this, "check", "SpellingContext.getContentType=[%s]",
+					traverseContentType(0, contentType));
+
 		AbstractHunSpellEngine spellEngine = findContentProvider(contentType);
-		if( spellEngine == null ) {
+		if (spellEngine == null) {
 			spellEngine = new SimpleTextEngine();
 		}
 		spellEngine.setDictionary(dictionary);
-		spellEngine.setOptions(Activator.getDefault()
-				.getPreferenceStore().getInt(Activator.DEFAULT_OPTIONS));
+		spellEngine.setOptions(Activator.getDefault().getPreferenceStore()
+				.getInt(Activator.DEFAULT_OPTIONS));
 		spellEngine.check(document, regions, context, collector, monitor);
-		
+
 	}
 
+	/**
+	 * Find spell engine or return null. Try to find most suitable spell engine,
+	 * which means if not found for the given content type try it's parent, and
+	 * so on. If none found, will return null, which would mean use the default
+	 * text one.
+	 * 
+	 * @param contentType
+	 * @return
+	 */
+	private AbstractHunSpellEngine findContentProvider(IContentType contentType) {
+		String id = contentType.getId();
+		/*
+		 * org.eclipse.core.runtime.text org.eclipse.jdt.core.javaSource
+		 * org.eclipse.core.runtime.xml
+		 */
+		AbstractHunSpellEngine engine = Activator.findEngine(id);
+		if (engine == null) {
+			IContentType baseType = contentType.getBaseType();
+			if (baseType != null) {
+				findContentProvider(baseType);
+			}
+		} else {
+			return engine;
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param level
+	 *            the current level.
+	 * @param contentType
+	 * @return a string containing the dump of the chain of contentTypes
+	 */
+	private String traverseContentType(int level, IContentType contentType) {
+		StringBuilder wSB = new StringBuilder();
+		wSB.append(level);
+		wSB.append("=");
+		wSB.append(contentType.getId());
+		IContentType baseType = contentType.getBaseType();
+		if (baseType != null) {
+			wSB.append(',');
+			wSB.append(traverseContentType(level + 1, baseType));
+		}
+		return wSB.toString();
+	}
 }

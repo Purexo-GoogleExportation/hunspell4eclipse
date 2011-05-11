@@ -14,26 +14,34 @@
       </governor>
    </extension>
    <extension
-         id="id1"
+         id="jcpc1"
          point="org.eclipse.jdt.ui.javaCompletionProposalComputer">
       <javaCompletionProposalComputer
             activate="true"
             categoryId="org.eclipse.jdt.ui.defaultProposalCategory"
-            class="com.lorands.hunspell4eclipse.javaspell.JavaHunspellCompletionProposalComputer">
+            class="com.lorands.hunspell4eclipse.javaspell.HunspellJavaCompletionProposalComputer">
       </javaCompletionProposalComputer>
    </extension>
    <extension
+   		id="qfp1"
          point="org.eclipse.jdt.ui.quickFixProcessors">
       <quickFixProcessor
-            class="com.lorands.hunspell4eclipse.javaspell.HunspellQuickFixProcessor"
-            id="com.lorands.hunspell4eclipse.javaSpell.quickFixProcessor1"
-            name="HunspellQuickFixProcessor">
+            class="com.lorands.hunspell4eclipse.javaspell.HunspellQuickFixProcessor.XXX"
+            id="HunspellQuickFixProcessor"
+            name="Hunspell QuickFix Processor">
+            <!-- 
+            Since 3.2 an extension can specify which problem marker types it can handle. 
+            It will only get problems of these types to process. If no handled marker type are specified, 
+            the processor will only get problems of types 
+            org.eclipse.jdt.core.problem, 
+            org.eclipse.jdt.core.buildpath_problem and 
+            org.eclipse.jdt.core.task (compatible to the behaviour prior to 3.2).
+            
+            annotation vs marker : see  http://www.eclipsezone.com/eclipse/forums/t82973.html
+            -->
          <handledMarkerTypes>
-            <markerType
-                  id="com.lorands.hunspell4eclipse.javaSpell.markerType1">
-            </markerType>
+            <markerType id="???" />
          </handledMarkerTypes>
       </quickFixProcessor>
    </extension>
-
 </plugin>
