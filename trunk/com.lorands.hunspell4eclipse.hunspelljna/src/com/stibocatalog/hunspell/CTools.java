@@ -12,22 +12,44 @@ import java.util.List;
  */
 public class CTools {
 
+	public final static String EMPTY = "";
+	public final static String LIB_EMPTY = "empty";
+	public final static String LIB_NULL = "null";
+
 	/**
 	 * @param aValues
 	 * @param aSeparator
 	 * @return
 	 */
 	public static String arrayToString(Object[] aValues, String aSeparator) {
+		return arrayToString(aValues, aSeparator, false);
+	}
+
+	/**
+	 * @param aValues
+	 * @param aSeparator
+	 * @return
+	 */
+	public static String arrayToString(Object[] aValues, String aSeparator,
+			boolean aJumpIfNull) {
+		if (aValues == null)
+			return String.valueOf(aValues);
+
 		StringBuilder wSB = new StringBuilder(256);
-		if (aValues != null) {
-			int wLenAfterSep = 0;
-			int wMax = aValues.length;
-			for (int wI = 0; wI < wMax; wI++) {
-				if (wSB.length() > wLenAfterSep) {
-					wSB.append(aSeparator);
-					wLenAfterSep = wSB.length();
-				}
-				wSB.append(aValues[wI].toString());
+		int wLenAfterSep = 0;
+		int wMax = aValues.length;
+		Object wValue;
+		for (int wI = 0; wI < wMax; wI++) {
+			if (wSB.length() > wLenAfterSep) {
+				wSB.append(aSeparator);
+				wLenAfterSep = wSB.length();
+			}
+			wValue = aValues[wI];
+			if (wValue != null || !aJumpIfNull) {
+				String wStr = String.valueOf(wValue);
+				if (wStr.isEmpty())
+					wStr = LIB_EMPTY;
+				wSB.append(wStr);
 			}
 		}
 		return wSB.toString();
@@ -59,15 +81,31 @@ public class CTools {
 	 * @return
 	 */
 	public static String listToString(List<?> aValues, String aSeparator) {
+		return listToString(aValues, aSeparator, false);
+	}
+
+	/**
+	 * @param aValues
+	 * @param aSeparator
+	 * @return
+	 */
+	public static String listToString(List<?> aValues, String aSeparator,
+			boolean aJumpIfNull) {
+		if (aValues == null)
+			return String.valueOf(aValues);
+
 		StringBuilder wSB = new StringBuilder(256);
-		if (aValues != null) {
-			int wLenAfterSep = 0;
-			for (Object wObj : aValues) {
-				if (wSB.length() > wLenAfterSep) {
-					wSB.append(aSeparator);
-					wLenAfterSep = wSB.length();
-				}
-				wSB.append(wObj.toString());
+		int wLenAfterSep = 0;
+		for (Object wObj : aValues) {
+			if (wSB.length() > wLenAfterSep) {
+				wSB.append(aSeparator);
+				wLenAfterSep = wSB.length();
+			}
+			if (wObj != null || !aJumpIfNull) {
+				String wStr = String.valueOf(wObj);
+				if (wStr.isEmpty())
+					wStr = LIB_EMPTY;
+				wSB.append(wStr);
 			}
 		}
 		return wSB.toString();

@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.spelling.SpellingEngineDescriptor;
 import org.osgi.framework.BundleContext;
 
 import com.stibocatalog.hunspell.CLog;
@@ -16,21 +17,21 @@ import com.stibocatalog.hunspell.Hunspell;
  * @author L—r‡nd Somogyi < lorand dot somogyi at gmail dot com >
  *         http://lorands.com
  */
-public class Activator extends AbstractUIPlugin {
-
-	public static final String DEFAULT_OPTIONS = "DefaultOptions";
-
-	public static final String DICTPATH = "DictPath";
+public class Hunspell4EclipsePlugin extends AbstractUIPlugin {
 
 	// The shared instance
-	private static Activator plugin;
+	private static Hunspell4EclipsePlugin plugin;
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.lorands.hunspell4eclipse";
 
 	public static final String SPELLENGINE_EXTENSION_POINT_ID = "com.lorands.hunspell4eclipse.content.governor";
 
-	public static final String THRESHOLD = "Threshold";
+	// the plug-in preferences
+	public static final String SPELLING_OPTIONS = "DefaultOptions";
+	public static final String SPELLING_DICTPATH = "DictPath";
+	public static final String SPELLING_PROBLEMS_THRESHOLD = "Threshold.problems";
+	public static final String SPELLING_PROPOSALS_THRESHOLD = "Threshold.proposals";
 
 	/**
 	 * Find suitable engine or return null.
@@ -56,7 +57,7 @@ public class Activator extends AbstractUIPlugin {
 					return engine;
 				} catch (CoreException e) {
 					CLog.logErr(
-							Activator.class,
+							Hunspell4EclipsePlugin.class,
 							"findEngine",
 							e,
 							"Unable to instanciate engine matching the extension point [%s]. id=[%s]",
@@ -73,8 +74,8 @@ public class Activator extends AbstractUIPlugin {
 	 * 
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
-		return Activator.plugin;
+	public static Hunspell4EclipsePlugin getDefault() {
+		return Hunspell4EclipsePlugin.plugin;
 	}
 
 	/**
@@ -86,8 +87,24 @@ public class Activator extends AbstractUIPlugin {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
-				path);
+		return AbstractUIPlugin.imageDescriptorFromPlugin(
+				Hunspell4EclipsePlugin.PLUGIN_ID, path);
+	}
+
+	/**
+	 * @return
+	 */
+	public static HunspellPreferences getPrefs() {
+		return new HunspellPreferences();
+	}
+
+	/**
+	 * @param aSpellingEngineDescriptor
+	 * @return
+	 */
+	public static boolean isMyDescriptor(
+			SpellingEngineDescriptor aSpellingEngineDescriptor) {
+		return Engine.ENGINE_ID.equals(aSpellingEngineDescriptor.getId());
 	}
 
 	private Hunspell hunspell;
@@ -95,7 +112,7 @@ public class Activator extends AbstractUIPlugin {
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public Hunspell4EclipsePlugin() {
 		super();
 	}
 
@@ -133,7 +150,7 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		Activator.plugin = this;
+		Hunspell4EclipsePlugin.plugin = this;
 
 		// init once!
 		hunspell = Hunspell.getInstance();
@@ -165,7 +182,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		Activator.plugin = null;
+		Hunspell4EclipsePlugin.plugin = null;
 		super.stop(context);
 
 		// diagnose (activated if the "hunspell.log.on" system

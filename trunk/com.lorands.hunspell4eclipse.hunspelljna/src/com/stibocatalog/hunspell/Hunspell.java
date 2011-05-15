@@ -255,7 +255,6 @@ public class Hunspell {
 
 		@Override
 		public String toString() {
-
 			return String.format("Dictionary: Locale=[%s] encoding=[%s]",
 					getLocale().toString(), getEncoding());
 		}
@@ -490,16 +489,20 @@ public class Hunspell {
 	public Dictionary getDictionary(String baseFileName)
 			throws FileNotFoundException, UnsupportedEncodingException {
 
+		Dictionary d;
 		// TODO: Detect if the dictionary files have changed and reload if they
 		// have.
 		if (map.containsKey(baseFileName)) {
-			return map.get(baseFileName);
-
+			d = map.get(baseFileName);
 		} else {
-			Dictionary d = new Dictionary(baseFileName);
+			d = new Dictionary(baseFileName);
 			map.put(baseFileName, d);
-			return d;
 		}
+
+		if (CLog.on())
+			CLog.logOut(this, "getDictionary", "Dictionary :[%s", d.toString());
+
+		return d;
 	}
 
 	protected void tryLoad(String libFile) throws UnsupportedOperationException {

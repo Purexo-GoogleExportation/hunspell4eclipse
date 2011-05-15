@@ -1,14 +1,17 @@
 package com.lorands.hunspell4eclipse;
 
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import com.stibocatalog.hunspell.CLog;
 
 /**
  * 
@@ -23,38 +26,39 @@ import org.eclipse.swt.widgets.Text;
  */
 public class HunspellPrefsComposite extends Composite {
 
-	private Button button = null;
-	private DefaultPreferenceOptions composite = null;
-	private String dictPath = null; // @jve:decl-index=0:
-	private Label lDictionary = null;
-	private Label lTreshold = null;
-	private Text text = null;
-	private int threshold;
-	private Text tThreshold = null;
+	private Button pButton = null;
+	private HunspellPrefsCompositeOptions pCompositeOptions;
 
+	private String pDictionaryPath = "";
+
+	private Label pLabelDictionary;
+
+	private Label pLabelProblemsTreshold;
+	private Label pLabelProposalsTreshold;
+
+	final PixelConverter pPixelConverter = new PixelConverter(this);
+	private int pProblemsThreshold = 0;
+	private int pProposalsThreshold = 0;
+
+	private Text pTextDictonaryPath;
+
+	private Text pTextProblemsThreshold;
+
+	private Text pTextProposalsThreshold;
+
+	/**
+	 * @param parent
+	 * @param style
+	 */
 	public HunspellPrefsComposite(Composite parent, int style) {
 		super(parent, style);
 		initialize();
 	}
 
 	/**
-	 * This method initializes composite
-	 * 
+	 * @return
 	 */
-	private void createComposite() {
-		GridData gridData2 = new GridData();
-		gridData2.horizontalAlignment = GridData.FILL;
-		gridData2.grabExcessHorizontalSpace = false;
-		gridData2.horizontalSpan = 3;
-		gridData2.verticalAlignment = GridData.CENTER;
-		GridLayout gridLayout1 = new GridLayout();
-		gridLayout1.numColumns = 1;
-		composite = new DefaultPreferenceOptions(this, SWT.NONE);
-		composite.setLayout(gridLayout1);
-		composite.setLayoutData(gridData2);
-	}
-
-	private String getDict() {
+	private String chooseFileDictionary() {
 		final FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
 		fd.setFilterExtensions(new String[] { "*.dic", "*" });
 		fd.setText("Select Dictionary");
@@ -62,120 +66,289 @@ public class HunspellPrefsComposite extends Composite {
 		return path;
 	}
 
-	public String getDictPath() {
-		return dictPath;
+	/**
+	 * @return
+	 */
+	public String getDictionaryPath() {
+		return pDictionaryPath;
 	}
 
-	public int getThreshold() {
-		return threshold;
+	/**
+	 * @return
+	 */
+	public int getProblemsThreshold() {
+		return pProblemsThreshold;
 	}
 
-	private void initialize() {
-		this.setSize(new Point(286, 261));
-		GridData gridData11 = new GridData();
-		gridData11.horizontalAlignment = GridData.FILL;
-		gridData11.verticalAlignment = GridData.CENTER;
-		final GridData gridData1 = new GridData();
-		gridData1.grabExcessHorizontalSpace = true;
-		gridData1.horizontalAlignment = GridData.CENTER;
-		gridData1.verticalAlignment = GridData.CENTER;
-		final GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.verticalAlignment = GridData.CENTER;
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.verticalAlignment = GridData.CENTER;
-		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 3;
+	/**
+	 * @return
+	 */
+	public int getProposalsThreshold() {
+		return pProposalsThreshold;
+	}
 
-		if (dictPath == null) {
-		} else {
-			text.setText(dictPath);
-		}
-		lDictionary = new Label(this, SWT.NONE);
-		lDictionary.setText("Dictionary");
-		lDictionary.setLayoutData(gridData1);
-		text = new Text(this, SWT.BORDER);
-		text.setText("Select dictionary");
-		text.setLayoutData(gridData);
-		text.setEditable(false);
-		button = new Button(this, SWT.NONE);
-		button.setText("Browse...");
-		button.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+	/**
+	 * 
+	 */
+	private void initGroupDictPath() {
+		// three columns. Different size.
+		GridLayout gridLayoutDictPath = new GridLayout(3, false);
+
+		Group wGroupDictionary = new Group(this, SWT.NONE);
+		wGroupDictionary.setText("Dictionary");
+		wGroupDictionary.setLayout(gridLayoutDictPath);
+		wGroupDictionary.setLayoutData(newGridDataGroup());
+
+		pLabelDictionary = new Label(wGroupDictionary, SWT.NONE);
+		pLabelDictionary.setText("Dictionary file path (*.dic file)");
+		pLabelDictionary.setLayoutData(newGridDataLabel(50));
+
+		pTextDictonaryPath = new Text(wGroupDictionary, SWT.BORDER);
+		pTextDictonaryPath.setText(getDictionaryPath());
+		pTextDictonaryPath.setLayoutData(newGridDataField(60));
+		pTextDictonaryPath.setEditable(false);
+
+		pButton = new Button(wGroupDictionary, SWT.NONE);
+		pButton.setText("Browse...");
+		pButton.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
 			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
-				final String dict = getDict();
-				setDictPath(dict);
+				final String dict = chooseFileDictionary();
+				setDictionaryPath(dict);
 			}
 		});
-		this.setLayout(gridLayout);
-		// setSize(new Point(300, 200));
-		createComposite();
 
-		lTreshold = new Label(this, SWT.NONE);
-		lTreshold.setText("Threshold");
-		lTreshold.setLayoutData(gridData1);
-		tThreshold = new Text(this, SWT.BORDER);
-		tThreshold.setText("100");
-		tThreshold.setLayoutData(gridData11);
-		tThreshold
+	}
+
+	/**
+	 * This method initializes composite
+	 * 
+	 */
+	private void initGroupOptionseOptions() {
+
+		GridData gridData2 = new GridData();
+		gridData2.grabExcessHorizontalSpace = false;
+		gridData2.verticalAlignment = GridData.CENTER;
+		gridData2.horizontalAlignment = GridData.FILL;
+
+		// one column
+		GridLayout gridLayoutOptions = new GridLayout(1, true);
+
+		pCompositeOptions = new HunspellPrefsCompositeOptions(this, SWT.NONE);
+		pCompositeOptions.setLayout(gridLayoutOptions);
+		pCompositeOptions.setLayoutData(gridData2);
+	}
+
+	/**
+	 * 
+	 */
+	private void initGroupThresolds() {
+		// two columns. Different sizes.
+		GridLayout gridLayoutThresolds = new GridLayout(2, false);
+
+		Group wGroupThresold = new Group(this, SWT.FILL);
+		wGroupThresold.setText("Thresolds");
+		wGroupThresold.setLayoutData(newGridDataGroup());
+		wGroupThresold.setLayout(gridLayoutThresolds);
+
+		pLabelProblemsTreshold = new Label(wGroupThresold, SWT.NONE);
+		pLabelProblemsTreshold
+				.setText("Maximum number of problems reported per file:");
+		pLabelProblemsTreshold.setLayoutData(newGridDataLabel(50));
+
+		pTextProblemsThreshold = new Text(wGroupThresold, SWT.BORDER);
+		pTextProblemsThreshold.setText(String.valueOf(pProblemsThreshold));
+		pTextProblemsThreshold.setLayoutData(newGridDataField(10));
+		pTextProblemsThreshold
 				.addModifyListener(new org.eclipse.swt.events.ModifyListener() {
 					@Override
 					public void modifyText(org.eclipse.swt.events.ModifyEvent e) {
-						threshold = Integer.valueOf(tThreshold.getText());
+						try {
+							pProblemsThreshold = Integer
+									.valueOf(pTextProblemsThreshold.getText());
+						} catch (Exception ex) {
+							if (CLog.on())
+								CLog.logErr(
+										HunspellPrefsComposite.this,
+										"modifyText",
+										ex,
+										"unable to convert ProblemsThreshold [%s]",
+										pTextProblemsThreshold.getText());
+						}
+					}
+				});
+
+		pLabelProposalsTreshold = new Label(wGroupThresold, SWT.NONE);
+		pLabelProposalsTreshold
+				.setText("Maximum number of correction proposals:");
+		pLabelProposalsTreshold.setLayoutData(newGridDataLabel(50));
+
+		pTextProposalsThreshold = new Text(wGroupThresold, SWT.BORDER);
+		pTextProposalsThreshold.setText(String.valueOf(pProposalsThreshold));
+		pTextProposalsThreshold.setLayoutData(newGridDataField(10));
+		pTextProposalsThreshold
+				.addModifyListener(new org.eclipse.swt.events.ModifyListener() {
+					@Override
+					public void modifyText(org.eclipse.swt.events.ModifyEvent e) {
+						try {
+							pProposalsThreshold = Integer
+									.valueOf(pTextProposalsThreshold.getText());
+						} catch (Exception ex) {
+							if (CLog.on())
+								CLog.logErr(
+										HunspellPrefsComposite.this,
+										"modifyText",
+										ex,
+										"unable to convert ProposalsThreshold [%s]",
+										pTextProblemsThreshold.getText());
+						}
 					}
 				});
 	}
 
+	/**
+	 * 
+	 */
+	private void initialize() {
+		// setSize(new Point(286, 261));
+
+		// one column
+		setLayout(new GridLayout(1, true));
+
+		initGroupDictPath();
+
+		initGroupThresolds();
+
+		initGroupOptionseOptions();
+	}
+
+	/**
+	 * @return
+	 */
 	boolean isSingleLetter() {
-		return composite.isSingleLetter();
+		return pCompositeOptions.isSingleLetter();
 	}
 
+	/**
+	 * @return
+	 */
 	boolean isUpperCase() {
-		return composite.isUpperCase();
+		return pCompositeOptions.isUpperCase();
 	}
 
+	/**
+	 * @return
+	 */
 	boolean isWWDigitsIgnored() {
-		return composite.isWWDigitsIgnored();
+		return pCompositeOptions.isWWDigitsIgnored();
 	}
 
+	/**
+	 * @return
+	 */
 	boolean isWWMixedCaseIgnored() {
-		return composite.isWWMixedCaseIgnored();
+		return pCompositeOptions.isWWMixedCaseIgnored();
 	}
 
+	/**
+	 * @return
+	 */
 	boolean isWWNonLetters() {
-		return composite.isWWNonLetters();
+		return pCompositeOptions.isWWNonLetters();
 	}
 
-	public void setDictPath(String dictPath) {
-		this.dictPath = dictPath;
-		this.text.setText(dictPath);
+	/**
+	 * @return
+	 */
+	private GridData newGridData(int aNbCharacterWidth) {
+		GridData wGridData = new GridData();
+		wGridData.verticalAlignment = GridData.CENTER;
+		wGridData.horizontalAlignment = GridData.FILL;
+		if (aNbCharacterWidth > 0)
+			wGridData.widthHint = pPixelConverter
+					.convertWidthInCharsToPixels(40);
+		return wGridData;
 	}
 
+	/**
+	 * @param aNbCharacterWidth
+	 * @return
+	 */
+	private GridData newGridDataField(int aNbCharacterWidth) {
+		GridData wGridData = newGridData(aNbCharacterWidth);
+		return wGridData;
+	}
+
+	/**
+	 * @return
+	 */
+	private GridData newGridDataGroup() {
+		GridData wGridData = newGridData(0);
+		return wGridData;
+	}
+
+	private GridData newGridDataLabel(int aNbCharacterWidth) {
+		GridData wGridData = newGridData(aNbCharacterWidth);
+		return wGridData;
+	}
+
+	/**
+	 * @param dictPath
+	 */
+	public void setDictionaryPath(String dictPath) {
+		this.pDictionaryPath = dictPath;
+		this.pTextDictonaryPath.setText(dictPath);
+	}
+
+	/**
+	 * @param th
+	 */
+	public void setProblemsThreshold(int th) {
+		this.pProblemsThreshold = th;
+		pTextProblemsThreshold.setText(Integer.toString(th));
+	}
+
+	/**
+	 * @param th
+	 */
+	public void setProposalsThreshold(int th) {
+		this.pProposalsThreshold = th;
+		pTextProposalsThreshold.setText(Integer.toString(th));
+	}
+
+	/**
+	 * @param opt
+	 */
 	void setSingleLetter(boolean opt) {
-		composite.setSingleLetter(opt);
+		pCompositeOptions.setSingleLetter(opt);
 	}
 
-	public void setThreshold(int th) {
-		this.threshold = th;
-		tThreshold.setText(Integer.toString(th));
-	}
-
+	/**
+	 * @param opt
+	 */
 	void setUpperCase(boolean opt) {
-		composite.setUpperCase(opt);
+		pCompositeOptions.setUpperCase(opt);
 	}
 
+	/**
+	 * @param opt
+	 */
 	void setWWDigitsIgnored(boolean opt) {
-		composite.setWWDigitsIgnored(opt);
+		pCompositeOptions.setWWDigitsIgnored(opt);
 	}
 
+	/**
+	 * @param opt
+	 */
 	void setWWMixedCaseIgnored(boolean opt) {
-		composite.setWWMixedCaseIgnored(opt);
+		pCompositeOptions.setWWMixedCaseIgnored(opt);
 	}
 
+	/**
+	 * @param opt
+	 */
 	void setWWNonLetters(boolean opt) {
-		composite.setWWNonLetters(opt);
+		pCompositeOptions.setWWNonLetters(opt);
 	}
 
-} // @jve:decl-index=0:visual-constraint="10,10"
+}

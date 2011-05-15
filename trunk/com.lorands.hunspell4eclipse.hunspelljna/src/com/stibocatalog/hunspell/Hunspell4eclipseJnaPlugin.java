@@ -12,10 +12,10 @@ import org.osgi.framework.BundleContext;
  * @author Olivier Gattaz < olivier dot gattaz at isandlatech dot com >
  * @date 28/04/2011 (dd/mm/yy)
  */
-public class Activator extends AbstractUIPlugin {
+public class Hunspell4eclipseJnaPlugin extends AbstractUIPlugin {
 
 	// The shared instance
-	private static Activator plugin;
+	private static Hunspell4eclipseJnaPlugin plugin;
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.lorands.hunspell4eclipse.hunspelljna"; //$NON-NLS-1$
@@ -25,7 +25,7 @@ public class Activator extends AbstractUIPlugin {
 	 * 
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static Hunspell4eclipseJnaPlugin getDefault() {
 		return plugin;
 	}
 
@@ -44,7 +44,7 @@ public class Activator extends AbstractUIPlugin {
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public Hunspell4eclipseJnaPlugin() {
 		super();
 		// log some informations about the logger.
 		CLog.logLoggerInfo();

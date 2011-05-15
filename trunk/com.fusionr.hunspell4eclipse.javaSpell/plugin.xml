@@ -19,16 +19,15 @@
       <javaCompletionProposalComputer
             activate="true"
             categoryId="org.eclipse.jdt.ui.defaultProposalCategory"
-            class="com.lorands.hunspell4eclipse.javaspell.HunspellJavaCompletionProposalComputer">
+            class="com.lorands.hunspell4eclipse.javaspell.JavaSpellCompletionProposalComputer">
       </javaCompletionProposalComputer>
    </extension>
    <extension
-   		id="qfp1"
          point="org.eclipse.jdt.ui.quickFixProcessors">
       <quickFixProcessor
-            class="com.lorands.hunspell4eclipse.javaspell.HunspellQuickFixProcessor.XXX"
-            id="HunspellQuickFixProcessor"
-            name="Hunspell QuickFix Processor">
+      		name="JavaSpellQuickFixProcessor"
+            class="com.lorands.hunspell4eclipse.javaspell.JavaSpellQuickFixProcessor"
+            id="com.lorands.hunspell4eclipse.javaspell.JavaSpellQuickFixProcessor" >
             <!-- 
             Since 3.2 an extension can specify which problem marker types it can handle. 
             It will only get problems of these types to process. If no handled marker type are specified, 
@@ -36,11 +35,13 @@
             org.eclipse.jdt.core.problem, 
             org.eclipse.jdt.core.buildpath_problem and 
             org.eclipse.jdt.core.task (compatible to the behaviour prior to 3.2).
+                        
+            why this markerType id ?
+            => Look at the same extension point definition in the plugin.xml file of the pluguin "org.eclipse.jdt.ui"
             
-            annotation vs marker : see  http://www.eclipsezone.com/eclipse/forums/t82973.html
             -->
          <handledMarkerTypes>
-            <markerType id="???" />
+            <markerType id="org.eclipse.jdt.ui.internal.spelling" />
          </handledMarkerTypes>
       </quickFixProcessor>
    </extension>

@@ -32,24 +32,34 @@ import com.stibocatalog.hunspell.Hunspell.Dictionary;
 public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 
 	private final static String PROBLEM_MESSAGE_FORMAT = "Hunspell: the word '%s' is not correctly spelled ( %s proposal%s)";
+
 	private static final ICompletionProposal[] PROPOSALS_EMPTY_ARRAY = new ICompletionProposal[0];
+
 	private Dictionary dictionary;
 	private int opts;
 
+	private final int pNbAcceptedProblems;
+	private final int pNbMaxProposals;
 	private final IPreferenceStore preferenceStore;
-
-	private int threshold;
 
 	/**
 	 * 
 	 */
 	public AbstractHunSpellEngine() {
-		this.preferenceStore = Activator.getDefault().getPreferenceStore();
-		// TODO this part should be in some kind of utility
-		this.threshold = preferenceStore.getInt(Activator.THRESHOLD);
-		if (threshold == 0) {
-			threshold = 100;
-		}
+		this.preferenceStore = Hunspell4EclipsePlugin.getDefault().getPreferenceStore();
+
+		pNbAcceptedProblems = getJdtUiIntPreference(
+				Hunspell4EclipsePlugin.SPELLING_PROBLEMS_THRESHOLD, 100);
+
+		pNbMaxProposals = getJdtUiIntPreference(
+				Hunspell4EclipsePlugin.SPELLING_PROPOSALS_THRESHOLD, 6);
+
+		// diagnose (activated if the "hunspell.log.on"
+		// system property is defined).
+		if (CLog.on())
+			CLog.logOut(this, CLog.LIB_CONSTRUCTOR,
+					"%s NbAcceptedProblems=[%d] NbMaxProposals=[%d]",
+					CLog.LIB_INSTANCIATED, pNbAcceptedProblems, pNbMaxProposals);
 	}
 
 	/**
@@ -60,11 +70,11 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	 * @param distance
 	 * @return an instance of SpellingProblem containing a array of proposal(s)
 	 */
-	private SpellingProblem buildSpellingProblem(final IRegion region,
-			final String str, final int strLength, int distance) {
+	protected SpellingProblem buildSpellingProblem(IRegion region, String str,
+			int strLength, int distance) {
 
 		SpellingProblem problem = null;
-		final int inOffset = region.getOffset() + distance;
+		final int inOffset = distance;
 
 		// get suggestions
 		final List<String> suggestList = getDictionary().suggest(str);
@@ -83,6 +93,10 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 						strLength);
 			}
 			proposalList.add(proposal);
+
+			// limits the number of proposals
+			if (proposalList.size() >= pNbMaxProposals)
+				break;
 		}
 		int wNbProposal = proposalList.size();
 
@@ -115,7 +129,7 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 			SpellingContext context, ISpellingProblemCollector collector,
 			IProgressMonitor monitor) {
 
-		int cntr = 0;
+		int wNbFoundProblem = 0;
 
 		// diagnose (activated if the "hunspell.log.on" system property is
 		// defined).
@@ -123,120 +137,143 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 			CLog.logOut(this, "checkInner", " nb regions=[%d]", regions.length);
 
 		for (final IRegion region : regions) {
+
 			// the user wants to stop ?
 			if (monitor != null && monitor.isCanceled())
 				return;
 
-			// retrieve the doc part of the document corresponding to the region
-			int wRegionOffset = region.getOffset();
-			int wRegionLength = region.getLength();
-			String docPart = null;
-			try {
-				docPart = document.get(wRegionOffset, wRegionLength);
-			} catch (final BadLocationException e) {
-				CLog.logErr(
-						this,
-						"checkInner",
-						e,
-						"Spelling Service provided offset/length that points out of the document. RegionOffset=[%d] RegionLength=[%d]",
-						wRegionOffset, wRegionLength);
-				// ends the method
+			wNbFoundProblem = checkOneRegion(document, region, collector,
+					monitor, wNbFoundProblem);
+			if (wNbFoundProblem < 0)
 				return;
-			}
+		}
+	}
+
+	/**
+	 * @param document
+	 * @param region
+	 * @param collector
+	 * @param monitor
+	 * @param nbFoundProblem
+	 *            the previous total number of found problems
+	 * @return the total number of found problems . -1 for any reason to stop
+	 *         the checking.
+	 */
+	protected int checkOneRegion(IDocument document, IRegion region,
+			ISpellingProblemCollector collector, IProgressMonitor monitor,
+			int nbFoundProblem) {
+
+		// retrieve the doc part of the document corresponding to the region
+		int wRegionOffset = region.getOffset();
+		int wRegionLength = region.getLength();
+		String docPart = null;
+		try {
+			docPart = document.get(wRegionOffset, wRegionLength);
+		} catch (final BadLocationException e) {
+			CLog.logErr(
+					this,
+					"checkInner",
+					e,
+					"Spelling Service provided offset/length that points out of the document. RegionOffset=[%d] RegionLength=[%d]",
+					wRegionOffset, wRegionLength);
+			// ends the method
+			return -1;
+		}
+
+		// diagnose (activated if the "hunspell.log.on" system
+		// property is defined).
+		if (CLog.on())
+			CLog.logOut(this, "checkInner",
+					"RegionOffset=[%d] RegionLength=[%d] docPartSize=[%d] ",
+					wRegionOffset, wRegionLength, docPart.length());
+
+		BreakIterator bi = BreakIterator.getWordInstance(getDictionary()
+				.getLocale());
+
+		bi.setText(docPart);
+
+		int wWordIdx = 0;
+		String wWord;
+		int wWordDistance = 0;
+		int wFirstIndex = 0;
+		while (bi.next() != BreakIterator.DONE) {
+			// retrieve the word
+			wWord = docPart.substring(wFirstIndex, bi.current());
+			wWordIdx++;
+			// the distance of the current word in the region is its
+			// firstIndex
+			wWordDistance = wFirstIndex;
 
 			// diagnose (activated if the "hunspell.log.on" system
 			// property is defined).
 			if (CLog.on())
-				CLog.logOut(
-						this,
-						"checkInner",
-						"RegionOffset=[%d] RegionLength=[%d] docPartSize=[%d] ",
-						wRegionOffset, wRegionLength, docPart.length());
+				CLog.logOut(this, "checkInner",
+						"WordIdx=[%d] Word=[%s] len=[%d]", wWordIdx, wWord,
+						wWord.length());
 
-			BreakIterator bi = BreakIterator.getWordInstance(getDictionary()
-					.getLocale());
-
-			bi.setText(docPart);
-
-			int wWordIdx = 0;
-			String wWord;
-			int wWordLength;
-			int wWordDistance = 0;
-			int wFirstIndex = 0;
-			while (bi.next() != BreakIterator.DONE) {
-				// retrieve the word
-				// TODO : must manage the composite word including non letter
-				// character like "@param"
-				wWord = docPart.substring(wFirstIndex, bi.current());
-				wWordLength = wWord.length();
-				wWordIdx++;
-				// the distance of the current word in the region is its
-				// firstIndex
-				wWordDistance = wFirstIndex;
-
-				// diagnose (activated if the "hunspell.log.on" system
-				// property is defined).
-				if (CLog.on())
-					CLog.logOut(this, "checkInner",
-							"WordIdx=[%d] Word=[%s] len=[%d]", wWordIdx, wWord,
-							wWordLength);
-
-				// if the word must be checked and id it is misspelled
-				if (checkRules(wWord) && getDictionary().misspelled(wWord)) {
-					// adds a new spelling problem in the collector
-					collector.accept(buildSpellingProblem(region, wWord,
-							wWordLength, wWordDistance));
-					cntr++;
-					// limit reached, get out
-					if (cntr >= threshold)
-						return;
-				}
-
-				wFirstIndex = bi.current();
+			if (!checkOneWord(region, collector, wWord, wWordDistance)) {
+				nbFoundProblem++;
+				// limit reached, get out
+				if (nbFoundProblem >= pNbAcceptedProblems)
+					return -1;
 			}
+			wFirstIndex = bi.current();
 		}
+		return nbFoundProblem;
+	}
+
+	/**
+	 * @param region
+	 * @param collector
+	 * @param wWord
+	 * @param wWordDistance
+	 * @return
+	 */
+	protected boolean checkOneWord(IRegion region,
+			ISpellingProblemCollector collector, String wWord, int wWordDistance) {
+
+		// if the word must be checked and id it is misspelled
+		boolean wWrong = (checkRules(wWord) && getDictionary()
+				.misspelled(wWord));
+		// adds a new spelling problem in the collector
+		if (wWrong)
+			collector.accept(buildSpellingProblem(region, wWord,
+					wWord.length(), wWordDistance));
+
+		// check is true if not wrong
+		return !wWrong;
 	}
 
 	/**
 	 * @param str
 	 * @return
 	 */
-	private boolean checkRules(String str) {
+	protected boolean checkRules(String str) {
 		// forced default rules
-		if (str.length() == 0 || str.matches("\\s+")) {
+		if (str.length() == 0 || str.matches("\\s+"))
 			return false;
-		}
 
 		// option rules
 		// SingleLetter
-		if ((opts & 1) == 1) {
-			if (str.length() == 1) {
-				return false;
-			}
-		}
+		if (isSingleLetterIgnored() && (str.length() == 1))
+			return false;
 
 		// UpperCase
-		if ((opts & 2) == 2) {
-			if (str.toUpperCase().equals(str)) {
-				return false;
-			}
-		}
+		if (isUpperCaseWordIgnored() && str.toUpperCase().equals(str))
+			return false;
 
 		// WWDigitsIgnored
-		if ((opts & 4) == 4) {
-			if (str.matches(".*[\\d]+.*")) {
-				return false;
-			}
-		}
+		if (isWWDigitsIgnoredIgnored() && str.matches(".*[\\d]+.*"))
+			return false;
 
 		// WWMixedCaseIgnored
-		if ((opts & 8) == 8 && str.length() > 1) {
+		if (isWWMixedCaseIgnored() && str.length() > 1) {
 
 			// "Tomorrow" is not a mixed case word : only the first char is in
 			// upper case.
 			// "CMyClass" is a mixed case word
 
-			String wTestedPart = str.substring(1);
+			String wTestedPartOfWord = str.substring(1);
 
 			// The test rules :
 			// a) abCd => ABCD ( => different) && abCd => abcd ( => different)
@@ -246,17 +283,16 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 			// c) ABCD => ABCD ( => equal) && ABCD => abcd ( => different)
 			// ===> Not mixed case
 
-			if (!wTestedPart.toUpperCase().equals(wTestedPart)
-					&& !wTestedPart.toLowerCase().equals(wTestedPart)) {
+			if (!wTestedPartOfWord.toUpperCase().equals(wTestedPartOfWord)
+					&& !wTestedPartOfWord.toLowerCase().equals(
+							wTestedPartOfWord)) {
 				return false;
 			}
 		}
 		// WWNonLetters
-		if ((opts & 16) == 16) {
-			if (str.matches("[^\\p{L}]+")) {
-				return false;
-			}
-		}
+		if (isWWNonLettersIgnored() && str.matches("[^\\p{L}]+"))
+			return false;
+
 		return true;
 	}
 
@@ -275,9 +311,68 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	}
 
 	/**
+	 * @param aParamName
+	 * @param aDefault
+	 * @return
+	 */
+	private int getJdtUiIntPreference(String aParamName, int aDefault) {
+		int wValue = preferenceStore.getInt(aParamName);
+		return (wValue != 0) ? wValue : aDefault;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getNbAcceptedProblems() {
+		return pNbAcceptedProblems;
+	}
+
+	/**
+	 * @param opts
+	 */
+	protected int getOptions() {
+		return opts;
+	}
+
+	/**
 	 * @return
 	 */
 	public abstract boolean hasCompletionProposalCreator();
+
+	/**
+	 * @return
+	 */
+	public boolean isSingleLetterIgnored() {
+		return (getOptions() & 1) == 1;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isUpperCaseWordIgnored() {
+		return (getOptions() & 2) == 2;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isWWDigitsIgnoredIgnored() {
+		return (getOptions() & 4) == 4;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isWWMixedCaseIgnored() {
+		return (getOptions() & 8) == 8;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isWWNonLettersIgnored() {
+		return (getOptions() & 16) == 16;
+	}
 
 	/**
 	 * @param dictionary

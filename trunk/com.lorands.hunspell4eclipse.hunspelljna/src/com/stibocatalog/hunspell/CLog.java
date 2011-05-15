@@ -57,11 +57,11 @@ public class CLog {
 				aObjects);
 
 		// if not explit log on
-		if (!on() && Activator.getDefault() != null)
-			Activator
+		if (!on() && Hunspell4eclipseJnaPlugin.getDefault() != null)
+			Hunspell4eclipseJnaPlugin
 					.getDefault()
 					.getLog()
-					.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					.log(new Status(IStatus.ERROR, Hunspell4eclipseJnaPlugin.PLUGIN_ID,
 							wLogLine, aErr));
 		else {
 			System.err.println(wLogLine);
@@ -101,11 +101,11 @@ public class CLog {
 				aObjects);
 
 		// if not explicit log on
-		if (!on() && Activator.getDefault() != null)
-			Activator
+		if (!on() && Hunspell4eclipseJnaPlugin.getDefault() != null)
+			Hunspell4eclipseJnaPlugin
 					.getDefault()
 					.getLog()
-					.log(new Status(IStatus.INFO, Activator.PLUGIN_ID, wLogLine));
+					.log(new Status(IStatus.INFO, Hunspell4eclipseJnaPlugin.PLUGIN_ID, wLogLine));
 		else
 			System.out.println(wLogLine);
 

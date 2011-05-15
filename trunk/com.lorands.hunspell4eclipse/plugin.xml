@@ -4,6 +4,7 @@
    <extension-point id="com.lorands.hunspell4eclipse.content.governor" name="contentGorvernor" schema="schema/com.lorands.hunspell4eclipse.content.governor.exsd"/>
    <extension
          point="org.eclipse.ui.workbench.texteditor.spellingEngine">
+         <!-- attention : endig id declared in the class com.lorands.hunspell4eclipse.Engine -->
       <engine
             class="com.lorands.hunspell4eclipse.Engine"
             default="true"

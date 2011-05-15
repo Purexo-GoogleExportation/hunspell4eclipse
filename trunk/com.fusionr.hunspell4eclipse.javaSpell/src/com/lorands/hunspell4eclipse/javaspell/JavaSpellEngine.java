@@ -5,9 +5,13 @@ package com.lorands.hunspell4eclipse.javaspell;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.internal.ui.text.spelling.IJavaDocTagConstants;
+import org.eclipse.jdt.internal.ui.text.spelling.SpellCheckIterator;
+import org.eclipse.jdt.internal.ui.text.spelling.engine.ISpellCheckIterator;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.BadLocationException;
@@ -20,7 +24,6 @@ import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
 
@@ -29,10 +32,82 @@ import com.lorands.hunspell4eclipse.ICompletionProposalCreator;
 import com.stibocatalog.hunspell.CLog;
 
 /**
- * @author Lorand Somogyi
+ * @author L—r‡nd Somogyi < lorand dot somogyi at gmail dot com >
+ *         http://lorands.com
+ * @author Olivier Gattaz < olivier dot gattaz at isandlatech dot com >
+ * @date 12/05/2011 (dd/mm/yy)
  * 
  */
+@SuppressWarnings({ "restriction" })
 public final class JavaSpellEngine extends AbstractHunSpellEngine {
+
+	/**
+	 * @author ogattaz
+	 * 
+	 */
+	class HunspellJavaSpellCheckIterator extends SpellCheckIterator {
+
+		/**
+		 * @param document
+		 * @param region
+		 * @param locale
+		 */
+		public HunspellJavaSpellCheckIterator(IDocument document,
+				IRegion region, Locale locale) {
+			super(document, region, locale);
+		}
+
+		/**
+		 * @param aToken
+		 * @return
+		 */
+		private boolean isJavaDocToken(String aToken) {
+			if (aToken == null)
+				return false;
+
+			boolean wResult = false;
+			if (aToken.length() > 2
+					&& aToken.charAt(0) == IJavaDocTagConstants.JAVADOC_TAG_PREFIX) {
+
+				if (super.isToken(aToken,
+						IJavaDocTagConstants.JAVADOC_ROOT_TAGS)
+						|| super.isToken(aToken,
+								IJavaDocTagConstants.JAVADOC_PARAM_TAGS)
+						|| super.isToken(aToken,
+								IJavaDocTagConstants.JAVADOC_LINK_TAGS)
+						|| super.isToken(aToken,
+								IJavaDocTagConstants.JAVADOC_REFERENCE_TAGS)) {
+					wResult = true;
+				}
+			}
+			// diagnose (activated if the "hunspell.log.on"
+			// system
+			// property is defined).
+			if (CLog.on())
+				CLog.logOut(this, "isJavaDocWords",
+						"[%s] is javadoc token [%b]", String.valueOf(aToken),
+						wResult);
+
+			return wResult;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jdt.internal.ui.text.spelling.SpellCheckIterator#next()
+		 */
+		@Override
+		public Object next() {
+
+			String token = (String) super.next();
+
+			while (isJavaDocToken(token))
+				token = (String) super.next();
+
+			return token;
+		}
+	}
 
 	/**
 	 * @author Lorand Somogyi
@@ -89,7 +164,7 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 		}
 
 		@Override
-		public Point getSelection(IDocument document) {
+		public org.eclipse.swt.graphics.Point getSelection(IDocument document) {
 			return inner.getSelection(document);
 		}
 
@@ -104,6 +179,13 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 
 		private static final int relevance = 1;
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * com.lorands.hunspell4eclipse.ICompletionProposalCreator#createProposal
+		 * (java.lang.String, int, int, int)
+		 */
 		@Override
 		public ICompletionProposal createProposal(String replacementString,
 				int replacementOffset, int replacementLength, int cursorPosition) {
@@ -112,6 +194,13 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 					relevance);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * com.lorands.hunspell4eclipse.ICompletionProposalCreator#setup(java
+		 * .util.Map)
+		 */
 		@Override
 		public void setup(Map<String, ?> configuration) {
 			// nothing
@@ -129,6 +218,15 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 		super();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.lorands.hunspell4eclipse.AbstractHunSpellEngine#checkOneRegion(org
+	 * .eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion,
+	 * org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector,
+	 * org.eclipse.core.runtime.IProgressMonitor, int)
+	 */
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -184,6 +282,7 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 
 					IRegion innerRegion = new Region(region.getOffset()
 							+ partition.getOffset(), partition.getLength());
+
 					if (partition.getType().equals(IJavaPartitions.JAVA_DOC)
 							|| partition.getType().equals(
 									IJavaPartitions.JAVA_MULTI_LINE_COMMENT)
@@ -201,15 +300,58 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 						// adds javadocs, comments
 						regionsList.add(innerRegion);
 					} else {
-						regionsList.add(innerRegion);
+						// regionsList.add(innerRegion);
 					}
 				}
 			}
 		}
 
 		// call the check implemented in the abstract AbstractHunSpellEngine
-		checkInner(document, regionsList.toArray(EMPTY_REGION_ARRAY), context,
-				collector, monitor);
+		super.checkInner(document, regionsList.toArray(EMPTY_REGION_ARRAY),
+				context, collector, monitor);
+	}
+
+	@Override
+	@SuppressWarnings("restriction")
+	protected int checkOneRegion(IDocument document, IRegion region,
+			ISpellingProblemCollector collector, IProgressMonitor monitor,
+			int aNbFoundProblem) {
+
+		if (CLog.on())
+			CLog.logOut(this, "checkOneRegion",
+					"region: ofset=[%d] length=[%d]", region.getOffset(),
+					region.getLength());
+
+		// reuse the internal class SpellCheckIterator of the jdt to have the
+		// same word splitting rules
+		ISpellCheckIterator wSPIterator = new HunspellJavaSpellCheckIterator(
+				document, region, getDictionary().getLocale());
+
+		// set one of the option
+		wSPIterator.setIgnoreSingleLetters(isSingleLetterIgnored());
+
+		int wI = 0;
+		while (wSPIterator.hasNext()) {
+			Object wToken = wSPIterator.next();
+			if (wToken != null) {
+				String wWord = String.valueOf(wToken);
+				int wDistance = wSPIterator.getBegin();
+				wI++;
+				if (CLog.on())
+					CLog.logOut(this, "checkOneRegion", "word(%d)=[%s][%d]",
+							wI, wWord, wDistance);
+
+				if (!super.checkOneWord(region, collector, wWord, wDistance)) {
+
+					aNbFoundProblem++;
+					// limit reached, get out
+					if (aNbFoundProblem >= getNbAcceptedProblems())
+						return -1;
+				}
+
+			}
+		}
+		return aNbFoundProblem;
 	}
 
 	/*

@@ -7,11 +7,16 @@ import com.stibocatalog.hunspell.CLog;
 
 /**
  * The activator class controls the plug-in life cycle
+ * 
+ * @author L—r‡nd Somogyi < lorand dot somogyi at gmail dot com >
+ *         http://lorands.com
+ * @author Olivier Gattaz < olivier dot gattaz at isandlatech dot com >
+ * @date 12/05/2011 (dd/mm/yy)
  */
-public class Activator extends AbstractUIPlugin {
+public class Hunspell4EclipseJavaspellPlugin extends AbstractUIPlugin {
 
 	// The shared instance
-	private static Activator plugin;
+	private static Hunspell4EclipseJavaspellPlugin plugin;
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.lorands.hunspell4eclipse.javaGovernor";
@@ -21,14 +26,14 @@ public class Activator extends AbstractUIPlugin {
 	 * 
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static Hunspell4EclipseJavaspellPlugin getDefault() {
 		return plugin;
 	}
 
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public Hunspell4EclipseJavaspellPlugin() {
 		super();
 	}
 

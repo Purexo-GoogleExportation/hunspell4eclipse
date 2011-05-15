@@ -2,21 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Hunspell4Eclipse JavaSpell
 Bundle-SymbolicName: com.lorands.hunspell4eclipse.javaSpell;singleton:=true
-Bundle-Version: 0.7.1.qualifier
-Bundle-Activator: com.lorands.hunspell4eclipse.javaspell.Activator
+Bundle-Version: 0.7.2.qualifier
+Bundle-Activator: com.lorands.hunspell4eclipse.javaspell.Hunspell4EclipseJavaspellPlugin
 Bundle-Vendor: Lóránd Somogyi
 Require-Bundle: org.eclipse.core.runtime,
  com.lorands.hunspell4eclipse.hunspelljna,
  com.lorands.hunspell4eclipse,
- org.eclipse.ui.workbench;bundle-version="3.6.1",
+ org.eclipse.ui.workbench,
  org.eclipse.ui.workbench.texteditor,
+ org.eclipse.jface,
  org.eclipse.jface.text,
- org.eclipse.jdt.core;bundle-version="3.5.1",
+ org.eclipse.jdt.core,
  org.eclipse.jdt.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: com.stibocatalog.hunspell,
- org.eclipse.jdt.ui.text,
- org.eclipse.jdt.ui.text.java,
- org.eclipse.jface.preference,
- org.eclipse.swt.graphics

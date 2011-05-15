@@ -13,10 +13,11 @@ import org.eclipse.ui.texteditor.HippieProposalProcessor;
 import com.stibocatalog.hunspell.CLog;
 
 /**
- * @author ogattaz
  * 
+ * @author Olivier Gattaz < olivier dot gattaz at isandlatech dot com >
+ * @date 12/05/2011 (dd/mm/yy) *
  */
-public class HunspellJavaCompletionProposalComputer implements
+public class JavaSpellCompletionProposalComputer implements
 		IJavaCompletionProposalComputer {
 
 	private final HippieProposalProcessor fProcessor = new HippieProposalProcessor();
@@ -24,7 +25,7 @@ public class HunspellJavaCompletionProposalComputer implements
 	/**
 	 * 
 	 */
-	public HunspellJavaCompletionProposalComputer() {
+	public JavaSpellCompletionProposalComputer() {
 		super();
 
 		if (CLog.on())

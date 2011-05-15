@@ -2,10 +2,12 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="Hunspell4Eclipse" topic="html/maintopic.html">
-	<topic label="About"  href="html/maintopic.html"> 
-	</topic>
-	<topic href="html/install.html" label="Install">
+ <topic label="About"  href="html/maintopic.html"> 
+ </topic>
+ <topic href="html/install.html" label="Install">
  </topic>
  <topic href="html/usages.html" label="Usages">
+ </topic>
+ <topic href="html/contributors.html" label="Contributors">
  </topic>
 </toc>

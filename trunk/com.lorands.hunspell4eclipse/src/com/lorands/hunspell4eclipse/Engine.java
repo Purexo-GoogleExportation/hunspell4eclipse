@@ -9,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.texteditor.spelling.ISpellingEngine;
@@ -30,6 +29,9 @@ import com.stibocatalog.hunspell.Hunspell.Dictionary;
  */
 public class Engine implements ISpellingEngine {
 
+	// attention declared in plugin.xml
+	public final static String ENGINE_ID = "com.lorands.hunspell4eclipse.engine";
+
 	private static String NO_DICTIONARY_SELECTED_INFO = "Pleases select a dictionray in Preferences > General > Editors > Text Editors > Spelling.";
 	private static String NO_DICTIONARY_SELECTED_TITLE = "No dictionary selected";
 
@@ -43,24 +45,28 @@ public class Engine implements ISpellingEngine {
 	 */
 	public Engine() throws FileNotFoundException, UnsupportedEncodingException {
 
-		final IPreferenceStore preferenceStore = Activator.getDefault()
-				.getPreferenceStore();
+		HunspellPreferences wPrefs = new HunspellPreferences();
 
-		final String dictPath = preferenceStore.getString(Activator.DICTPATH);
-		if (dictPath == null || dictPath.isEmpty()) {
+		if (!wPrefs.hasDictionaryPath()) {
 
 			// log in StdErr
 			CLog.logErr(this, CLog.LIB_CONSTRUCTOR, "%s\näs",
 					NO_DICTIONARY_SELECTED_TITLE, NO_DICTIONARY_SELECTED_INFO);
 
 			// ask the user !
-			MessageDialog.openError(Activator.getDefault().getWorkbench()
-					.getActiveWorkbenchWindow().getShell(),
-					NO_DICTIONARY_SELECTED_TITLE, NO_DICTIONARY_SELECTED_INFO);
+			if (Hunspell4EclipsePlugin.getDefault().getWorkbench()
+					.getActiveWorkbenchWindow() != null)
+				MessageDialog.openError(Hunspell4EclipsePlugin.getDefault()
+						.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						NO_DICTIONARY_SELECTED_TITLE,
+						NO_DICTIONARY_SELECTED_INFO);
 
 			initOk = false;
 		} else {
-			final Hunspell hunspell = Activator.getDefault().getHunspell();
+			String dictPath = wPrefs.getDictionaryPath();
+
+			final Hunspell hunspell = Hunspell4EclipsePlugin.getDefault()
+					.getHunspell();
 
 			final boolean wHasExt = dictPath.indexOf('.') > -1;
 
@@ -105,8 +111,9 @@ public class Engine implements ISpellingEngine {
 			spellEngine = new SimpleTextEngine();
 		}
 		spellEngine.setDictionary(dictionary);
-		spellEngine.setOptions(Activator.getDefault().getPreferenceStore()
-				.getInt(Activator.DEFAULT_OPTIONS));
+		spellEngine.setOptions(Hunspell4EclipsePlugin.getDefault()
+				.getPreferenceStore()
+				.getInt(Hunspell4EclipsePlugin.SPELLING_OPTIONS));
 		spellEngine.check(document, regions, context, collector, monitor);
 
 	}
@@ -126,7 +133,7 @@ public class Engine implements ISpellingEngine {
 		 * org.eclipse.core.runtime.text org.eclipse.jdt.core.javaSource
 		 * org.eclipse.core.runtime.xml
 		 */
-		AbstractHunSpellEngine engine = Activator.findEngine(id);
+		AbstractHunSpellEngine engine = Hunspell4EclipsePlugin.findEngine(id);
 		if (engine == null) {
 			IContentType baseType = contentType.getBaseType();
 			if (baseType != null) {

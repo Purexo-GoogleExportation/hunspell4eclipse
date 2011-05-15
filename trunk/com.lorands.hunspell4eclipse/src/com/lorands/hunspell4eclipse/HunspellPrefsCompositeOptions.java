@@ -14,43 +14,42 @@ import org.eclipse.swt.widgets.Group;
 
 /**
  * @author Lorand Somogyi
- *
+ * 
  */
-class DefaultPreferenceOptions extends Composite {
+class HunspellPrefsCompositeOptions extends Composite {
 
-//	private Group group = null;
-	private Group group1 = null;
-	private Button checkBox = null;
-	private Button checkBox1 = null;
-	private Button checkBox2 = null;
-	private Button checkBox3 = null;
-	private Button checkBox4 = null;
-	public DefaultPreferenceOptions(Composite parent, int style) {
+	private Button checkBox;
+
+	private Button checkBox1;
+	private Button checkBox2;
+	private Button checkBox3;
+	private Button checkBox4;
+	private Group group1;
+
+	/**
+	 * @param parent
+	 * @param style
+	 */
+	public HunspellPrefsCompositeOptions(Composite parent, int style) {
 		super(parent, style);
 		initialize();
 	}
 
-	private void initialize() {
-		createGroup();
-		this.setLayout(new FillLayout());
-		setSize(new Point(300, 200));
-	}
-
 	/**
-	 * This method initializes group	
-	 *
+	 * This method initializes group
+	 * 
 	 */
 	private void createGroup() {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
-//		group = new Group(this, SWT.NONE);
-//		group.setLayout(gridLayout);
+		// group = new Group(this, SWT.NONE);
+		// group.setLayout(gridLayout);
 		createGroup1();
 	}
 
 	/**
-	 * This method initializes group1	
-	 *
+	 * This method initializes group1
+	 * 
 	 */
 	private void createGroup1() {
 		GridLayout gridLayout1 = new GridLayout();
@@ -80,48 +79,83 @@ class DefaultPreferenceOptions extends Composite {
 		checkBox4.setText("Ignore words with non-letters");
 		checkBox4.setSelection(true);
 	}
-	
-	boolean isWWDigitsIgnored() {
-		return checkBox.getSelection();
+
+	private void initialize() {
+		createGroup();
+		this.setLayout(new FillLayout());
+		setSize(new Point(300, 200));
 	}
-	
-	boolean isWWMixedCaseIgnored() {
-		return checkBox1.getSelection();
-	}		
-	
-	boolean isUpperCase() {
-		return checkBox2.getSelection();
-	}
-	
+
+	/**
+	 * @return
+	 */
 	boolean isSingleLetter() {
 		return checkBox3.getSelection();
 	}
-	
+
+	/**
+	 * @return
+	 */
+	boolean isUpperCase() {
+		return checkBox2.getSelection();
+	}
+
+	/**
+	 * @return
+	 */
+	boolean isWWDigitsIgnored() {
+		return checkBox.getSelection();
+	}
+
+	/**
+	 * @return
+	 */
+	boolean isWWMixedCaseIgnored() {
+		return checkBox1.getSelection();
+	}
+
+	/**
+	 * @return
+	 */
 	boolean isWWNonLetters() {
 		return checkBox4.getSelection();
 	}
 
-	public void setWWDigitsIgnored(boolean opt) {
-		checkBox.setSelection(opt);
+	/**
+	 * @param opt
+	 */
+	public void setSingleLetter(boolean opt) {
+		checkBox3.setSelection(opt);
+
 	}
 
-	public void setWWMixedCaseIgnored(boolean opt) {
-		checkBox1.setSelection(opt);
-		
-	}
-
+	/**
+	 * @param opt
+	 */
 	public void setUpperCase(boolean opt) {
 		checkBox2.setSelection(opt);
 	}
 
-	public void setSingleLetter(boolean opt) {
-		checkBox3.setSelection(opt);
-		
+	/**
+	 * @param opt
+	 */
+	public void setWWDigitsIgnored(boolean opt) {
+		checkBox.setSelection(opt);
 	}
 
+	/**
+	 * @param opt
+	 */
+	public void setWWMixedCaseIgnored(boolean opt) {
+		checkBox1.setSelection(opt);
+
+	}
+
+	/**
+	 * @param opt
+	 */
 	public void setWWNonLetters(boolean opt) {
 		checkBox4.setSelection(opt);
 	}
 
-	
 }
