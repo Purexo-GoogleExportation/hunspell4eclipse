@@ -19,7 +19,7 @@ Plug-in "com.lorands.hunspell4eclipse.javaSpell"
  * 0.7.2.qualifier
  * Renames the activator
  * Reuses the javadoc text splitter of the jdt plugin
- * Adds a QuickFixProcessor which shows the list af word correction proposals using the hunspell spelling engine
+ * Adds a QuickFixProcessor which returns a list of word correction proposals using the hunspell spelling engine
 
 Plug-in "com.lorands.hunspell4eclipse.hunspelljna"
  * 1.1.14.qualifier
