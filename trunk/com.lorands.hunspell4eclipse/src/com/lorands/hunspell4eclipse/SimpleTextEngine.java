@@ -34,25 +34,4 @@ public final class SimpleTextEngine extends AbstractHunSpellEngine {
 		checkInner(document, regions, context, collector, monitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.lorands.hunspell4eclipse.AbstractHunSpellEngine#
-	 * getCompletionProposalCreator()
-	 */
-	@Override
-	public ICompletionProposalCreator getCompletionProposalCreator() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.lorands.hunspell4eclipse.AbstractHunSpellEngine#
-	 * hasCompletionProposalCreator()
-	 */
-	@Override
-	public boolean hasCompletionProposalCreator() {
-		return false;
-	}
 }

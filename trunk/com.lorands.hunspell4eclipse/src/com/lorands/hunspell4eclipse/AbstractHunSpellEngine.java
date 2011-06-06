@@ -3,7 +3,6 @@
  */
 package com.lorands.hunspell4eclipse;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +45,8 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	 * 
 	 */
 	public AbstractHunSpellEngine() {
-		this.preferenceStore = Hunspell4EclipsePlugin.getDefault().getPreferenceStore();
+		this.preferenceStore = Hunspell4EclipsePlugin.getDefault()
+				.getPreferenceStore();
 
 		pNbAcceptedProblems = getJdtUiIntPreference(
 				Hunspell4EclipsePlugin.SPELLING_PROBLEMS_THRESHOLD, 100);
@@ -70,8 +70,8 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	 * @param distance
 	 * @return an instance of SpellingProblem containing a array of proposal(s)
 	 */
-	protected SpellingProblem buildSpellingProblem(IRegion region, String str,
-			int strLength, int distance) {
+	protected SpellingProblem buildSpellingProblem(IDocument document,
+			IRegion region, String str, int strLength, int distance) {
 
 		SpellingProblem problem = null;
 		final int inOffset = distance;
@@ -83,16 +83,8 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 
 		for (final String suggest : suggestList) {
 
-			ICompletionProposal proposal;
-
-			if (hasCompletionProposalCreator()) {
-				proposal = getCompletionProposalCreator().createProposal(
-						suggest, inOffset, strLength, strLength);
-			} else {
-				proposal = new CompletionProposal(suggest, inOffset, strLength,
-						strLength);
-			}
-			proposalList.add(proposal);
+			proposalList
+					.add(newProposal(document, suggest, inOffset, strLength));
 
 			// limits the number of proposals
 			if (proposalList.size() >= pNbMaxProposals)
@@ -100,9 +92,9 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 		}
 		int wNbProposal = proposalList.size();
 
-		problem = new HunspellingProblem(inOffset, strLength, String.format(
-				PROBLEM_MESSAGE_FORMAT, str, wNbProposal,
-				(wNbProposal > 1) ? "s" : ""),
+		problem = newSpellingProblem(document, inOffset, strLength,
+				String.format(PROBLEM_MESSAGE_FORMAT, str, wNbProposal,
+						(wNbProposal > 1) ? "s" : ""),
 				proposalList.toArray(PROPOSALS_EMPTY_ARRAY));
 
 		// diagnose (activated if the "hunspell.log.on"
@@ -187,37 +179,36 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 					"RegionOffset=[%d] RegionLength=[%d] docPartSize=[%d] ",
 					wRegionOffset, wRegionLength, docPart.length());
 
-		BreakIterator bi = BreakIterator.getWordInstance(getDictionary()
-				.getLocale());
-
-		bi.setText(docPart);
+		// BreakIterator bi = BreakIterator.getWordInstance(getDictionary()
+		// .getLocale());
+		// bi.setText(docPart);
+		HunspellCheckIterator bi = new HunspellCheckIterator(docPart,
+				wRegionOffset, getDictionary().getLocale());
 
 		int wWordIdx = 0;
 		String wWord;
 		int wWordDistance = 0;
-		int wFirstIndex = 0;
-		while (bi.next() != BreakIterator.DONE) {
+		while (bi.hasNext()) {
 			// retrieve the word
-			wWord = docPart.substring(wFirstIndex, bi.current());
+			wWord = bi.next();
 			wWordIdx++;
 			// the distance of the current word in the region is its
 			// firstIndex
-			wWordDistance = wFirstIndex;
+			wWordDistance = bi.getBegin();
 
 			// diagnose (activated if the "hunspell.log.on" system
 			// property is defined).
 			if (CLog.on())
 				CLog.logOut(this, "checkInner",
 						"WordIdx=[%d] Word=[%s] len=[%d]", wWordIdx, wWord,
-						wWord.length());
+						(wWord != null) ? wWord.length() : -1);
 
-			if (!checkOneWord(region, collector, wWord, wWordDistance)) {
+			if (!checkOneWord(document, region, collector, wWord, wWordDistance)) {
 				nbFoundProblem++;
 				// limit reached, get out
 				if (nbFoundProblem >= pNbAcceptedProblems)
 					return -1;
 			}
-			wFirstIndex = bi.current();
 		}
 		return nbFoundProblem;
 	}
@@ -229,7 +220,7 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	 * @param wWordDistance
 	 * @return
 	 */
-	protected boolean checkOneWord(IRegion region,
+	protected boolean checkOneWord(IDocument document, IRegion region,
 			ISpellingProblemCollector collector, String wWord, int wWordDistance) {
 
 		// if the word must be checked and id it is misspelled
@@ -237,7 +228,7 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 				.misspelled(wWord));
 		// adds a new spelling problem in the collector
 		if (wWrong)
-			collector.accept(buildSpellingProblem(region, wWord,
+			collector.accept(buildSpellingProblem(document, region, wWord,
 					wWord.length(), wWordDistance));
 
 		// check is true if not wrong
@@ -250,7 +241,7 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	 */
 	protected boolean checkRules(String str) {
 		// forced default rules
-		if (str.length() == 0 || str.matches("\\s+"))
+		if (str == null || str.length() == 0 || str.matches("\\s+"))
 			return false;
 
 		// option rules
@@ -297,13 +288,6 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	}
 
 	/**
-	 * Get completion proposal provider or null if none.
-	 * 
-	 * @return
-	 */
-	public abstract ICompletionProposalCreator getCompletionProposalCreator();
-
-	/**
 	 * @return
 	 */
 	public final Dictionary getDictionary() {
@@ -333,11 +317,6 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	protected int getOptions() {
 		return opts;
 	}
-
-	/**
-	 * @return
-	 */
-	public abstract boolean hasCompletionProposalCreator();
 
 	/**
 	 * @return
@@ -372,6 +351,32 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	 */
 	public boolean isWWNonLettersIgnored() {
 		return (getOptions() & 16) == 16;
+	}
+
+	/**
+	 * @param suggest
+	 * @param strLength
+	 * @param inOffset
+	 * @return
+	 */
+	protected ICompletionProposal newProposal(IDocument document,
+			String suggest, int inOffset, int strLength) {
+		return new CompletionProposal(suggest, inOffset, strLength, strLength);
+
+	}
+
+	/**
+	 * @param document
+	 * @param offset
+	 * @param length
+	 * @param message
+	 * @param proposals
+	 * @return
+	 */
+	protected SpellingProblem newSpellingProblem(IDocument document,
+			int offset, int length, String message,
+			ICompletionProposal[] proposals) {
+		return new HunspellingProblem(offset, length, message, proposals);
 	}
 
 	/**

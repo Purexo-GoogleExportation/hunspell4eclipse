@@ -4,12 +4,16 @@ import java.util.Iterator;
 
 /**
  * 
+ * Thanks to the jdt team (IBM Corporation )
+ * 
  * @see org.eclipse.jdt.internal.ui.text.spelling.engine.ISpellCheckIterator;
  * 
+ * @author IBM Corporation - jdt team
  * @author Olivier Gattaz < olivier dot gattaz at isandlatech dot com >
- * @date 11/05/2011 (dd/mm/yy) *
+ * @date 11/05/2011 (dd/mm/yy)
  */
-public interface IHunspellCheckIterator extends Iterator<String> {
+public interface IHunspellCheckIterator extends Iterator<String>,
+		IHunspellCheckConstants {
 
 	/**
 	 * Returns the begin index (inclusive) of the current word.
@@ -28,17 +32,9 @@ public interface IHunspellCheckIterator extends Iterator<String> {
 	/**
 	 * Tells whether to ignore single letters from being checked.
 	 * 
-	 * @since 3.3
 	 * @param state
 	 *            <code>true</code> if single letters should be ignored
 	 */
 	public void setIgnoreSingleLetters(boolean state);
 
-	/**
-	 * Does the current word start a new sentence?
-	 * 
-	 * @return <code>true<code> iff the current word starts a new sentence, <code>false</code>
-	 *         otherwise
-	 */
-	public boolean startsSentence();
 }

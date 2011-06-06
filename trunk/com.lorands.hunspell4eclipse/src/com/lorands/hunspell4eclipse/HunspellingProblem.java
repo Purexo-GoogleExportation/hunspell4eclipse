@@ -6,6 +6,7 @@ package com.lorands.hunspell4eclipse;
 import java.util.Arrays;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
 /**
@@ -15,7 +16,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingProblem;
  * @author L—r‡nd Somogyi < lorand dot somogyi at gmail dot com >
  *         http://lorands.com *
  */
-public final class HunspellingProblem extends SpellingProblem {
+public class HunspellingProblem extends SpellingProblem {
 
 	private final int length;
 	private final String message;
@@ -73,11 +74,28 @@ public final class HunspellingProblem extends SpellingProblem {
 		return proposals;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.texteditor.spelling.SpellingProblem#getProposals(org.eclipse
+	 * .jface.text.quickassist.IQuickAssistInvocationContext)
+	 * 
+	 * @since 3.4
+	 */
 	@Override
-	public String toString() {
-		return "HunspellingProblem [length=" + length + ", offset=" + offset
-				+ ", message=" + message + ", proposals="
-				+ Arrays.toString(proposals) + "]";
+	public ICompletionProposal[] getProposals(
+			IQuickAssistInvocationContext context) {
+		// @see extended class JavaHunspellingProblem
+		return getProposals();
 	}
 
+	@Override
+	public String toString() {
+		return String.format(
+				"%s:(length=[%d], offset=[%d], message=[%s], proposals=[%s])",
+				getClass().getSimpleName(), length, offset, message,
+				Arrays.toString(proposals));
+
+	}
 }
