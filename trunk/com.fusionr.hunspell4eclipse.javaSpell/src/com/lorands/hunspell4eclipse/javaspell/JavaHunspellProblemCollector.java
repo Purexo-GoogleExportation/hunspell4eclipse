@@ -14,7 +14,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingProblem;
  * @author Olivier Gattaz < olivier dot gattaz at isandlatech dot com >
  * @date 12/05/2011 (dd/mm/yy)
  */
-public class JavaSpellProblemCollector implements ISpellingProblemCollector {
+public class JavaHunspellProblemCollector implements ISpellingProblemCollector {
 
 	/** Problems list */
 	private final List<SpellingProblem> pProblemsList = new ArrayList<SpellingProblem>();

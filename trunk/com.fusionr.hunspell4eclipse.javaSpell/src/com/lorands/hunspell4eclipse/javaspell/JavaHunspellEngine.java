@@ -11,6 +11,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.internal.ui.text.spelling.IJavaDocTagConstants;
 import org.eclipse.jdt.internal.ui.text.spelling.SpellCheckIterator;
+import org.eclipse.jdt.internal.ui.text.spelling.WordCorrectionProposal;
 import org.eclipse.jdt.internal.ui.text.spelling.engine.ISpellCheckIterator;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
@@ -23,9 +24,12 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
+import org.eclipse.jface.text.source.TextInvocationContext;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
+import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
 import com.lorands.hunspell4eclipse.AbstractHunSpellEngine;
 import com.lorands.hunspell4eclipse.ICompletionProposalCreator;
@@ -39,7 +43,7 @@ import com.stibocatalog.hunspell.CLog;
  * 
  */
 @SuppressWarnings({ "restriction" })
-public final class JavaSpellEngine extends AbstractHunSpellEngine {
+public final class JavaHunspellEngine extends AbstractHunSpellEngine {
 
 	/**
 	 * @author ogattaz
@@ -189,6 +193,7 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 		@Override
 		public ICompletionProposal createProposal(String replacementString,
 				int replacementOffset, int replacementLength, int cursorPosition) {
+
 			return new JavaCompletionProposal(replacementString,
 					replacementOffset, replacementLength, cursorPosition,
 					relevance);
@@ -209,24 +214,13 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 
 	private static final IRegion[] EMPTY_REGION_ARRAY = new IRegion[0];
 
-	private static final JavaProposalCreator JAVA_PROPOSAL_CREATOR = new JavaProposalCreator();
-
 	/**
 	 * 
 	 */
-	public JavaSpellEngine() {
+	public JavaHunspellEngine() {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.lorands.hunspell4eclipse.AbstractHunSpellEngine#checkOneRegion(org
-	 * .eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion,
-	 * org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector,
-	 * org.eclipse.core.runtime.IProgressMonitor, int)
-	 */
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -311,8 +305,16 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 				context, collector, monitor);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.lorands.hunspell4eclipse.AbstractHunSpellEngine#checkOneRegion(org
+	 * .eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion,
+	 * org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector,
+	 * org.eclipse.core.runtime.IProgressMonitor, int)
+	 */
 	@Override
-	@SuppressWarnings("restriction")
 	protected int checkOneRegion(IDocument document, IRegion region,
 			ISpellingProblemCollector collector, IProgressMonitor monitor,
 			int aNbFoundProblem) {
@@ -341,14 +343,13 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 					CLog.logOut(this, "checkOneRegion", "word(%d)=[%s][%d]",
 							wI, wWord, wDistance);
 
-				if (!super.checkOneWord(region, collector, wWord, wDistance)) {
-
+				if (!super.checkOneWord(document, region, collector, wWord,
+						wDistance)) {
 					aNbFoundProblem++;
 					// limit reached, get out
 					if (aNbFoundProblem >= getNbAcceptedProblems())
 						return -1;
 				}
-
 			}
 		}
 		return aNbFoundProblem;
@@ -357,23 +358,47 @@ public final class JavaSpellEngine extends AbstractHunSpellEngine {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.lorands.hunspell4eclipse.AbstractHunSpellEngine#
-	 * getCompletionProposalCreator()
+	 * @see
+	 * com.lorands.hunspell4eclipse.AbstractHunSpellEngine#buildIProposal(java
+	 * .lang.String, int, int)
 	 */
 	@Override
-	public ICompletionProposalCreator getCompletionProposalCreator() {
-		return JAVA_PROPOSAL_CREATOR;
+	protected ICompletionProposal newProposal(IDocument document,
+			String suggest, int inOffset, int strLength) {
+
+		String[] wArguments = JavaHunspellingProblem
+				.calcWordCorrectionArguments(document, inOffset, strLength);
+
+		IQuickAssistInvocationContext wContext = new TextInvocationContext(
+				null, inOffset, strLength);
+
+		WordCorrectionProposal wProposal = new WordCorrectionProposal(suggest,
+				wArguments, inOffset, strLength, wContext, 1);
+
+		// diagnose (activated if the "hunspell.log.on"
+		// system
+		// property is defined).
+		if (CLog.on())
+			CLog.logOut(this, "newProposal", "kind=[%s] suggest=[%s]",
+					wProposal.getClass().getSimpleName(), suggest);
+
+		return wProposal;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.lorands.hunspell4eclipse.AbstractHunSpellEngine#
-	 * hasCompletionProposalCreator()
+	 * @see
+	 * com.lorands.hunspell4eclipse.AbstractHunSpellEngine#newSpellingProblem
+	 * (int, int, java.lang.String,
+	 * org.eclipse.jface.text.contentassist.ICompletionProposal[])
 	 */
 	@Override
-	public boolean hasCompletionProposalCreator() {
-		return true;
+	protected SpellingProblem newSpellingProblem(IDocument document,
+			int offset, int length, String message,
+			ICompletionProposal[] proposals) {
+		return new JavaHunspellingProblem(offset, length, message, proposals,
+				document);
 	}
 
 }

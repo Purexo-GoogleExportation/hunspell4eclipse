@@ -17,7 +17,7 @@ import com.stibocatalog.hunspell.CLog;
  * @author Olivier Gattaz < olivier dot gattaz at isandlatech dot com >
  * @date 12/05/2011 (dd/mm/yy) *
  */
-public class JavaSpellCompletionProposalComputer implements
+public class JavaHunspellCompletionProposalComputer implements
 		IJavaCompletionProposalComputer {
 
 	private final HippieProposalProcessor fProcessor = new HippieProposalProcessor();
@@ -25,7 +25,7 @@ public class JavaSpellCompletionProposalComputer implements
 	/**
 	 * 
 	 */
-	public JavaSpellCompletionProposalComputer() {
+	public JavaHunspellCompletionProposalComputer() {
 		super();
 
 		if (CLog.on())

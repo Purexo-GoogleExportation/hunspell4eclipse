@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.internal.ui.text.spelling.JavaSpellingReconcileStrategy;
 import org.eclipse.jdt.internal.ui.text.spelling.WordCorrectionProposal;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
@@ -36,19 +37,27 @@ import com.stibocatalog.hunspell.CTools;
  * @date 12/05/2011 (dd/mm/yy)
  * 
  */
-public class JavaSpellQuickFixProcessor implements IQuickFixProcessor {
+@SuppressWarnings("restriction")
+public class JavaHunspellQuickFixProcessor implements IQuickFixProcessor {
 
 	/**
 	 * 
 	 */
-	public JavaSpellQuickFixProcessor() {
+	public JavaHunspellQuickFixProcessor() {
 		super();
 
 		if (CLog.on())
 			CLog.logOut(this, CLog.LIB_CONSTRUCTOR, CLog.LIB_INSTANCIATED);
 	}
 
-	@SuppressWarnings("restriction")
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jdt.ui.text.java.IQuickFixProcessor#getCorrections(org.eclipse
+	 * .jdt.ui.text.java.IInvocationContext,
+	 * org.eclipse.jdt.ui.text.java.IProblemLocation[])
+	 */
 	@Override
 	public IJavaCompletionProposal[] getCorrections(IInvocationContext context,
 			IProblemLocation[] locations) throws CoreException {
@@ -60,18 +69,15 @@ public class JavaSpellQuickFixProcessor implements IQuickFixProcessor {
 		final ISpellingEngine wHunspellEngine = retrieveHunspellEngine();
 
 		// Prepare the spelling context
-		String contentTypeString = IContentTypeManager.CT_TEXT;
+		// String contentTypeString = IContentTypeManager.CT_TEXT;
 		IContentType contentType = Platform.getContentTypeManager()
-				.getContentType(contentTypeString);
+				.getContentType(IContentTypeManager.CT_TEXT);
 
 		SpellingContext wSpellingContext = new SpellingContext();
 		wSpellingContext.setContentType(contentType);
 
 		// retrieve the current document
 		final IDocument wCurrentDocument = retreiveDocument(context);
-
-		// for (int index = 0; index < locations.length; index++) {
-		// location = locations[index];
 
 		for (IProblemLocation location : locations) {
 
@@ -83,7 +89,7 @@ public class JavaSpellQuickFixProcessor implements IQuickFixProcessor {
 						location.getProblemId(), arguments.length,
 						CTools.arrayToString(arguments, ","));
 
-			JavaSpellProblemCollector collector = new JavaSpellProblemCollector();
+			JavaHunspellProblemCollector collector = new JavaHunspellProblemCollector();
 
 			// Define the region of the wrong word using the location
 			IRegion wWrongRegion = new Region(location.getOffset(),
@@ -153,7 +159,7 @@ public class JavaSpellQuickFixProcessor implements IQuickFixProcessor {
 			CLog.logOut(this, "hasCorrections", "CompilationUnit=[%s] id=[%d]",
 					aCompilationUnit.getElementName(), id);
 
-		return true;
+		return id == JavaSpellingReconcileStrategy.SPELLING_PROBLEM_ID;
 
 	}
 
