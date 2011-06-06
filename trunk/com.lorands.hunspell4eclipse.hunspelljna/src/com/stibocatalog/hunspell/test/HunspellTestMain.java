@@ -18,7 +18,7 @@ import com.stibocatalog.hunspell.Hunspell;
  *         com)
  */
 
-public class HunspellMain {
+public class HunspellTestMain {
 
 	private final static String LIB_RUN = "run";
 
@@ -26,15 +26,15 @@ public class HunspellMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		HunspellMain wApp = null;
+		HunspellTestMain wApp = null;
 		try {
 
-			wApp = new HunspellMain();
+			wApp = new HunspellTestMain();
 
 			wApp.run();
 
 		} catch (Exception e) {
-			CLog.logErr(HunspellMain.class, "main", e, "Failed !");
+			CLog.logErr(HunspellTestMain.class, "main", e, "Failed !");
 		} finally {
 			if (wApp != null)
 				wApp.destroy();
@@ -44,7 +44,7 @@ public class HunspellMain {
 	/**
 	 * 
 	 */
-	HunspellMain() {
+	HunspellTestMain() {
 		super();
 	}
 

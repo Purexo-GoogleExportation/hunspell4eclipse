@@ -89,6 +89,7 @@ public class CPlatform {
 
 	private final static String PROP_OS_NAME = "os.name";
 	private final static String PROP_OSARCH = "os.arch";
+	private final static String PROP_USER_DIR = "user.dir";
 	private final static String PROP_USER_HOME = "user.home";
 	private final static String PROP_USER_LANGUAGE = "user.language";
 
@@ -104,6 +105,13 @@ public class CPlatform {
 	 */
 	public static String getOsName() {
 		return System.getProperty(PROP_OS_NAME);
+	}
+
+	/**
+	 * @return
+	 */
+	public static String getUserDir() {
+		return System.getProperty(PROP_USER_DIR);
 	}
 
 	/**

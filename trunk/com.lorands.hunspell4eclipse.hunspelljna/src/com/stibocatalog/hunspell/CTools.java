@@ -57,9 +57,23 @@ public class CTools {
 
 	/**
 	 * @param aObjects
-	 * @return
+	 *            an array of objects
+	 * @return the common class of the objects stored in the array
 	 */
-	public static Class<?> getClassOfArrayElmts(Object[] aObjects) {
+	public static Class<?> calcClassOfArrayElmts(Object[] aObjects) {
+		return calcClassOfArrayElmts(aObjects, null);
+	}
+
+	/**
+	 * @param aObjects
+	 *            an array of objects
+	 * @param aObjectToAdd
+	 *            an object to add in the array
+	 * @return the common class of the objects stored in the array and that of
+	 *         the object to be added
+	 */
+	public static Class<?> calcClassOfArrayElmts(Object[] aObjects,
+			Object aObjectToAdd) {
 		if (aObjects == null)
 			return Object.class;
 		int wMax = aObjects.length;
@@ -67,12 +81,81 @@ public class CTools {
 			return Object.class;
 		if (aObjects[0] == null)
 			return Object.class;
+
+		// if the class of all the objets stored ine the array is the same, it's
+		// the found class.
 		Class<?> wFoundClass = aObjects[0].getClass();
 		for (int wI = 1; wI < wMax; wI++) {
-			if (aObjects[wI] == null || aObjects[wI].getClass() != wFoundClass)
-				return Object.class;
+			if (aObjects[wI] == null || aObjects[wI].getClass() != wFoundClass) {
+				wFoundClass = Object.class;
+				// break
+				wI = wMax;
+			}
 		}
+		// if the object to add isn't null and if the found class does'nt equal
+		// the
+		// class of the object => Object class
+		if (aObjectToAdd != null && wFoundClass != aObjectToAdd.getClass())
+			wFoundClass = Object.class;
+
 		return wFoundClass;
+	}
+
+	/**
+	 * @param aObjects
+	 *            an array of objects
+	 * @param aObjectToInsert
+	 *            an object to add in the array
+	 * @return the new array of objects with the inserted object
+	 */
+	public static Object[] insertFirstOneObject(Object[] aObjects,
+			Object aObjectToInsert) {
+		return insertOneObject(aObjects, aObjectToInsert, 0);
+	}
+
+	/**
+	 * @param aObjects
+	 *            an array of objects
+	 * @param aObjectToInsert
+	 *            an object to add in the array
+	 * @param aIdx
+	 *            the index of the position of the inserted object
+	 * @return the new array of objects with the inserted object
+	 */
+	public static Object[] insertOneObject(Object[] aObjects,
+			Object aObjectToInsert, int aIdx) {
+		if (aObjects == null)
+			return aObjects;
+		int wPreviousLen = aObjects.length;
+		if (wPreviousLen < 1)
+			return aObjects;
+
+		validObjectsIndex(aObjects, aIdx);
+
+		int wNewLen = wPreviousLen + 1;
+		Object[] wNewArray = (Object[]) Array.newInstance(
+				calcClassOfArrayElmts(aObjects, aObjectToInsert), wNewLen);
+
+		// if we must add the object first
+		if (aIdx == 0) {
+			System.arraycopy(aObjects, 0, wNewArray, 1, wPreviousLen);
+			wNewArray[0] = aObjectToInsert;
+			// if we must remove the last object
+		} else if (aIdx == wPreviousLen - 1) {
+			System.arraycopy(aObjects, 0, wNewArray, 0, wPreviousLen);
+			wNewArray[wNewLen - 1] = aObjectToInsert;
+			//
+		} else {
+			// wLen = 10 and aIdx = 5 => wNewLen = 9
+			// wSubLenA = aIdx = 5 (old index 0 to 4)
+			// wSubLenb = wNewMax- aIdx = 4 (old index 6 to 9)
+			System.arraycopy(aObjects, 0, wNewArray, 0, aIdx);
+			System.arraycopy(aObjects, aIdx, wNewArray, aIdx + 1, wPreviousLen
+					- aIdx);
+			wNewArray[aIdx] = aObjectToInsert;
+
+		}
+		return wNewArray;
 	}
 
 	/**
@@ -126,15 +209,12 @@ public class CTools {
 		int wLen = aObjects.length;
 		if (wLen < 1)
 			return aObjects;
-		if (aIdx < 0 || aIdx > wLen - 1)
-			throw new IndexOutOfBoundsException(String.format(
-					"index [%d] is less than zero", aIdx));
-		if (aIdx > wLen - 1)
-			throw new IndexOutOfBoundsException(String.format(
-					"index [%d] is greater than len-1 (len=[%d])", aIdx, wLen));
+
+		validObjectsIndex(aObjects, aIdx);
+
 		int wNewLen = wLen - 1;
 		Object[] wNewArray = (Object[]) Array.newInstance(
-				getClassOfArrayElmts(aObjects), wNewLen);
+				calcClassOfArrayElmts(aObjects), wNewLen);
 
 		// if we must remove the first object
 		if (aIdx == 0)
@@ -213,5 +293,23 @@ public class CTools {
 			wBuffer[wI] = aChar;
 		}
 		return String.valueOf(wBuffer);
+	}
+
+	/**
+	 * @param aObjects
+	 * @param aIdx
+	 * @throws IndexOutOfBoundsException
+	 */
+	private static void validObjectsIndex(Object[] aObjects, int aIdx)
+			throws IndexOutOfBoundsException {
+		if (aObjects == null)
+			throw new IndexOutOfBoundsException("the target array is null");
+		int wLen = aObjects.length;
+		if (aIdx < 0 || aIdx > wLen - 1)
+			throw new IndexOutOfBoundsException(String.format(
+					"index [%d] is less than zero", aIdx));
+		if (aIdx > wLen - 1)
+			throw new IndexOutOfBoundsException(String.format(
+					"index [%d] is greater than len-1 (len=[%d])", aIdx, wLen));
 	}
 }
