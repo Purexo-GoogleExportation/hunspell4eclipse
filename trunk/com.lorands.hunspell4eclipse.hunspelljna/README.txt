@@ -1,5 +1,10 @@
 **** JNA based Java API for Hunspell ***
 
+========================================================
+http://dren.dk/hunspell.html
+========================================================
+
+
 This package contains the JNA based Java bindings for the Hunspell, see:
 https://jna.dev.java.net/ and http://hunspell.sourceforge.net/ for details
 on how these work.

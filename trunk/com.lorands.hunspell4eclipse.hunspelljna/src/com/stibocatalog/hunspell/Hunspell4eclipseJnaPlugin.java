@@ -86,6 +86,9 @@ public class Hunspell4eclipseJnaPlugin extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+
+		Hunspell.getInstance().destroyAllDictionaries();
+
 		super.stop(context);
 
 		// diagnose (activated if the "hunspell.log.on" system

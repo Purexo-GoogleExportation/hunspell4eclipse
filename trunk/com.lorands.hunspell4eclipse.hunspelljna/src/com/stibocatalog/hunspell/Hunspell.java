@@ -468,6 +468,20 @@ public class Hunspell {
 	}
 
 	/**
+	 * Removes all the dictionaries from the internal cache
+	 * 
+	 */
+	public void destroyAllDictionaries() {
+		int wSize = map.size();
+		map.clear();
+		// diagnose (activated if the "hunspell.log.on" system
+		// property is defined).
+		if (CLog.on())
+			CLog.logOut(this, "destroyAllDictionaries",
+					" [%d] dictionaries removed.", wSize);
+	}
+
+	/**
 	 * Removes a dictionary from the internal cache
 	 * 
 	 * @param baseFileName
