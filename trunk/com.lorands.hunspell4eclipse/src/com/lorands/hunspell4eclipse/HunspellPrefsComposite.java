@@ -1,7 +1,10 @@
 package com.lorands.hunspell4eclipse;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -10,6 +13,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor;
 
 import com.stibocatalog.hunspell.CLog;
 
@@ -26,24 +30,21 @@ import com.stibocatalog.hunspell.CLog;
  */
 public class HunspellPrefsComposite extends Composite {
 
+	private int pAcceptEnglishWords = 0;
 	private Button pButton = null;
 	private HunspellPrefsCompositeOptions pCompositeOptions;
-
 	private String pDictionaryPath = "";
-
+	private Button pEngishCheckBox;
+	private Label pLabelAcceptEnglishWords;
 	private Label pLabelDictionary;
-
 	private Label pLabelProblemsTreshold;
 	private Label pLabelProposalsTreshold;
-
 	final PixelConverter pPixelConverter = new PixelConverter(this);
 	private int pProblemsThreshold = 0;
 	private int pProposalsThreshold = 0;
-
+	private IPreferenceStatusMonitor pStatusMonitor;
 	private Text pTextDictonaryPath;
-
 	private Text pTextProblemsThreshold;
-
 	private Text pTextProposalsThreshold;
 
 	/**
@@ -58,33 +59,139 @@ public class HunspellPrefsComposite extends Composite {
 	/**
 	 * @return
 	 */
-	private String chooseFileDictionary() {
-		final FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
-		fd.setFilterExtensions(new String[] { "*.dic", "*" });
-		fd.setText("Select Dictionary");
-		final String path = fd.open();
-		return path;
+	boolean acceptEnglishWords() {
+		return getAcceptEnglishWords() != 0;
 	}
 
 	/**
 	 * @return
 	 */
-	public String getDictionaryPath() {
+	boolean canPerformOk() {
+		String wDictionaryPath = getDictionaryPath();
+
+		boolean wPerformOk = (wDictionaryPath != null && !wDictionaryPath
+				.isEmpty());
+
+		if (CLog.on())
+			CLog.logOut(this, "canPerformOk",
+					"wDictionaryPath=[%s] canPerformOk=[%b]", wDictionaryPath,
+					wPerformOk);
+
+		return wPerformOk;
+	}
+
+	/**
+	 * @return
+	 */
+	private String chooseFileDictionary() {
+		final FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
+		fd.setFilterExtensions(new String[] { "*.dic" });
+		fd.setText("Select an hunspell dictionary file ( *.dic).");
+		final String path = fd.open();
+		return path;
+	}
+
+	/**
+	 * 
+	 */
+	void desableAcceptEngishWords() {
+		pEngishCheckBox.setSelection(false);
+		pEngishCheckBox.setEnabled(false);
+		setAcceptEngishWords(HunspellPreferences.DEFAULT_ACCEPT_ENGLISH);
+
+		pLabelAcceptEnglishWords
+				.setText("No english dictionary available near the selected one.");
+	}
+
+	/**
+ * 
+ */
+	private void doAfterChange() {
+		if (hasStatusMonitor()) {
+			if (!hasDictionaryPath())
+				pStatusMonitor.statusChanged(new Status(IStatus.ERROR,
+						Hunspell4EclipsePlugin.PLUGIN_ID,
+						"No dictionary file selected."));
+			else if (!hasProblemsThreshold())
+				pStatusMonitor.statusChanged(new Status(IStatus.ERROR,
+						Hunspell4EclipsePlugin.PLUGIN_ID,
+						"Not an integer  value for the problems threshold."));
+			else if (!hasProposalsThreshold())
+				pStatusMonitor.statusChanged(new Status(IStatus.ERROR,
+						Hunspell4EclipsePlugin.PLUGIN_ID,
+						"Not an integer value for the proposals threshold."));
+			else
+				pStatusMonitor.statusChanged(Status.OK_STATUS);
+		}
+	}
+
+	void enableAcceptEngishWords() {
+		pEngishCheckBox.setEnabled(true);
+		pLabelAcceptEnglishWords.setText("");
+	}
+
+	/**
+	 * @return
+	 */
+	int getAcceptEnglishWords() {
+		return pAcceptEnglishWords;
+	}
+
+	/**
+	 * @return
+	 */
+	String getDictionaryPath() {
 		return pDictionaryPath;
 	}
 
 	/**
 	 * @return
 	 */
-	public int getProblemsThreshold() {
+	int getProblemsThreshold() {
 		return pProblemsThreshold;
 	}
 
 	/**
 	 * @return
 	 */
-	public int getProposalsThreshold() {
+	int getProposalsThreshold() {
 		return pProposalsThreshold;
+	}
+
+	/**
+	 * @return
+	 */
+	boolean hasDictionaryPath() {
+		return (pDictionaryPath != null && !pDictionaryPath.isEmpty());
+	}
+
+	/**
+	 * @return
+	 */
+	boolean hasProblemsThreshold() {
+		return pProblemsThreshold > 0;
+	}
+
+	/**
+	 * @return
+	 */
+	boolean hasProposalsThreshold() {
+		return pProposalsThreshold > 0;
+	}
+
+	/**
+	 * @return
+	 */
+	boolean hasStatusMonitor() {
+		return pStatusMonitor != null;
+	}
+
+	void initAcceptEngishWords(int aAcceptEnglishWords) {
+		if (pEngishCheckBox.getEnabled()) {
+			setAcceptEngishWords(aAcceptEnglishWords);
+
+			pEngishCheckBox.setSelection(aAcceptEnglishWords != 0);
+		}
 	}
 
 	/**
@@ -114,9 +221,26 @@ public class HunspellPrefsComposite extends Composite {
 			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				final String dict = chooseFileDictionary();
-				setDictionaryPath(dict);
+				setDictionaryPath((dict != null) ? dict : "");
+
 			}
 		});
+
+		pEngishCheckBox = new Button(wGroupDictionary, SWT.CHECK);
+		pEngishCheckBox.setText("accept also english words");
+		pEngishCheckBox.setSelection(true);
+		pEngishCheckBox
+				.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						setAcceptEngishWords(pEngishCheckBox.getSelection() ? 1
+								: 0);
+					}
+
+				});
+
+		pLabelAcceptEnglishWords = new Label(wGroupDictionary, SWT.NONE);
+		pLabelAcceptEnglishWords.setLayoutData(newGridDataLabel(70));
 
 	}
 
@@ -163,18 +287,9 @@ public class HunspellPrefsComposite extends Composite {
 				.addModifyListener(new org.eclipse.swt.events.ModifyListener() {
 					@Override
 					public void modifyText(org.eclipse.swt.events.ModifyEvent e) {
-						try {
-							pProblemsThreshold = Integer
-									.valueOf(pTextProblemsThreshold.getText());
-						} catch (Exception ex) {
-							if (CLog.on())
-								CLog.logErr(
-										HunspellPrefsComposite.this,
-										"modifyText",
-										ex,
-										"unable to convert ProblemsThreshold [%s]",
-										pTextProblemsThreshold.getText());
-						}
+
+						setProblemsThreshold(pTextProblemsThreshold.getText());
+
 					}
 				});
 
@@ -190,18 +305,9 @@ public class HunspellPrefsComposite extends Composite {
 				.addModifyListener(new org.eclipse.swt.events.ModifyListener() {
 					@Override
 					public void modifyText(org.eclipse.swt.events.ModifyEvent e) {
-						try {
-							pProposalsThreshold = Integer
-									.valueOf(pTextProposalsThreshold.getText());
-						} catch (Exception ex) {
-							if (CLog.on())
-								CLog.logErr(
-										HunspellPrefsComposite.this,
-										"modifyText",
-										ex,
-										"unable to convert ProposalsThreshold [%s]",
-										pTextProblemsThreshold.getText());
-						}
+
+						setProposalsThreshold(pTextProposalsThreshold.getText());
+
 					}
 				});
 	}
@@ -220,6 +326,9 @@ public class HunspellPrefsComposite extends Composite {
 		initGroupThresolds();
 
 		initGroupOptionseOptions();
+
+		if (CLog.on())
+			CLog.logOut(this, "initialize", "OK");
 	}
 
 	/**
@@ -293,17 +402,32 @@ public class HunspellPrefsComposite extends Composite {
 	}
 
 	/**
+	 * @param aAcceptEnglishWords
+	 */
+	void setAcceptEngishWords(int aAcceptEnglishWords) {
+		pAcceptEnglishWords = aAcceptEnglishWords;
+	}
+
+	/**
 	 * @param dictPath
 	 */
-	public void setDictionaryPath(String dictPath) {
+	void setDictionaryPath(String dictPath) {
 		this.pDictionaryPath = dictPath;
 		this.pTextDictonaryPath.setText(dictPath);
+
+		if (!hasDictionaryPath()
+				|| !Engine.hasEnglishDictionaryInSameDir(pDictionaryPath))
+			desableAcceptEngishWords();
+		else
+			enableAcceptEngishWords();
+
+		doAfterChange();
 	}
 
 	/**
 	 * @param th
 	 */
-	public void setProblemsThreshold(int th) {
+	void setProblemsThreshold(int th) {
 		this.pProblemsThreshold = th;
 		pTextProblemsThreshold.setText(Integer.toString(th));
 	}
@@ -311,9 +435,47 @@ public class HunspellPrefsComposite extends Composite {
 	/**
 	 * @param th
 	 */
-	public void setProposalsThreshold(int th) {
+	void setProblemsThreshold(String th) {
+		try {
+			pProblemsThreshold = Integer.valueOf(th);
+
+		} catch (Exception ex) {
+			if (CLog.on())
+				CLog.logErr(HunspellPrefsComposite.this,
+						"setProblemsThreshold", ex,
+						"unable to convert ProblemsThreshold [%s]",
+						pTextProblemsThreshold.getText());
+
+			pProblemsThreshold = -1;
+		}
+
+		doAfterChange();
+	}
+
+	/**
+	 * @param th
+	 */
+	void setProposalsThreshold(int th) {
 		this.pProposalsThreshold = th;
 		pTextProposalsThreshold.setText(Integer.toString(th));
+	}
+
+	/**
+	 * @param th
+	 */
+	void setProposalsThreshold(String th) {
+		try {
+			pProposalsThreshold = Integer.valueOf(pTextProposalsThreshold
+					.getText());
+		} catch (Exception ex) {
+			if (CLog.on())
+				CLog.logErr(HunspellPrefsComposite.this, "modifyText", ex,
+						"unable to convert ProposalsThreshold [%s]",
+						pTextProblemsThreshold.getText());
+			pProposalsThreshold = -1;
+		}
+
+		doAfterChange();
 	}
 
 	/**
@@ -321,6 +483,16 @@ public class HunspellPrefsComposite extends Composite {
 	 */
 	void setSingleLetter(boolean opt) {
 		pCompositeOptions.setSingleLetter(opt);
+	}
+
+	/**
+	 * @param aStatusMonitor
+	 */
+	void setStatusMonitor(IPreferenceStatusMonitor aStatusMonitor) {
+		pStatusMonitor = aStatusMonitor;
+		if (CLog.on())
+			CLog.logOut(this, "setStatusMonitor", "StatusMonitor=[%s]",
+					pStatusMonitor.toString());
 	}
 
 	/**

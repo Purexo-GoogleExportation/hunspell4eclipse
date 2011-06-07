@@ -327,7 +327,7 @@ public final class JavaHunspellEngine extends AbstractHunSpellEngine {
 		// reuse the internal class SpellCheckIterator of the jdt to have the
 		// same word splitting rules
 		ISpellCheckIterator wSPIterator = new HunspellJavaSpellCheckIterator(
-				document, region, getDictionary().getLocale());
+				document, region, getSelectedDictionary().getLocale());
 
 		// set one of the option
 		wSPIterator.setIgnoreSingleLetters(isSingleLetterIgnored());

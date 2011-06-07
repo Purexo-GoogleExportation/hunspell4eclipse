@@ -19,6 +19,9 @@ import com.stibocatalog.hunspell.Hunspell;
  */
 public class Hunspell4EclipsePlugin extends AbstractUIPlugin {
 
+	private static final String CONTENT_TYPE_ID = "contentType";
+	private static final String GOVERNS_CONTENT_TYPE_ID = "governsContentTypeId";
+
 	// The shared instance
 	private static Hunspell4EclipsePlugin plugin;
 
@@ -27,9 +30,10 @@ public class Hunspell4EclipsePlugin extends AbstractUIPlugin {
 
 	public static final String SPELLENGINE_EXTENSION_POINT_ID = "com.lorands.hunspell4eclipse.content.governor";
 
+	public static final String SPELLING_ACCEPT_ENGLISH = "accept.english";
 	// the plug-in preferences
-	public static final String SPELLING_OPTIONS = "DefaultOptions";
 	public static final String SPELLING_DICTPATH = "DictPath";
+	public static final String SPELLING_OPTIONS = "DefaultOptions";
 	public static final String SPELLING_PROBLEMS_THRESHOLD = "Threshold.problems";
 	public static final String SPELLING_PROPOSALS_THRESHOLD = "Threshold.proposals";
 
@@ -43,27 +47,58 @@ public class Hunspell4EclipsePlugin extends AbstractUIPlugin {
 		IConfigurationElement[] configArray = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(SPELLENGINE_EXTENSION_POINT_ID);
 
+		// diagnose (activated if the "hunspell.log.on" system
+		// property is defined).
+		if (CLog.on())
+			CLog.logOut(Hunspell4EclipsePlugin.class, "findEngine",
+					" idToFind=[%s] nbConfigFound=[%d]", id,
+					(configArray != null) ? configArray.length : -1);
+
+		int wConfigIdx = 0;
+
 		for (IConfigurationElement config : configArray) {
 			IConfigurationElement[] contents = config
-					.getChildren("contentType");
-			if (contents.length < 1) {
-				continue;
-			}
-			// System.out.println(config.getChildren("contentType")[0].getAttribute("governsContentTypeId"));
-			if (contents[0].getAttribute("governsContentTypeId").equals(id)) {
-				try {
-					final AbstractHunSpellEngine engine = (AbstractHunSpellEngine) config
-							.createExecutableExtension("class");
-					return engine;
-				} catch (CoreException e) {
-					CLog.logErr(
-							Hunspell4EclipsePlugin.class,
-							"findEngine",
-							e,
-							"Unable to instanciate engine matching the extension point [%s]. id=[%s]",
-							SPELLENGINE_EXTENSION_POINT_ID, id);
+					.getChildren(CONTENT_TYPE_ID);
+
+			if (contents.length > 0) {
+
+				String wGovernsContentTypeId = contents[0]
+						.getAttribute(GOVERNS_CONTENT_TYPE_ID);
+
+				// diagnose (activated if the "hunspell.log.on" system
+				// property is defined).
+				if (CLog.on())
+					CLog.logOut(Hunspell4EclipsePlugin.class, "findEngine",
+							"configIdx=[%d] %s=[%s]", wConfigIdx,
+							SPELLENGINE_EXTENSION_POINT_ID,
+							wGovernsContentTypeId);
+
+				// System.out.println(config.getChildren("contentType")[0].getAttribute("governsContentTypeId"));
+				if (wGovernsContentTypeId != null
+						&& wGovernsContentTypeId.equals(id)) {
+					try {
+						final AbstractHunSpellEngine engine = (AbstractHunSpellEngine) config
+								.createExecutableExtension("class");
+
+						// diagnose (activated if the "hunspell.log.on" system
+						// property is defined).
+						if (CLog.on())
+							CLog.logOut(Hunspell4EclipsePlugin.class,
+									"findEngine", "new engine=[%s]",
+									engine.toString());
+
+						return engine;
+					} catch (CoreException e) {
+						CLog.logErr(
+								Hunspell4EclipsePlugin.class,
+								"findEngine",
+								e,
+								"Unable to instanciate engine matching the extension point [%s]. id=[%s]",
+								SPELLENGINE_EXTENSION_POINT_ID, id);
+					}
 				}
 			}
+			wConfigIdx++;
 		}
 
 		return null;
@@ -117,9 +152,16 @@ public class Hunspell4EclipsePlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * @return
+	 */
+	public Hunspell getHunspell() {
+		return hunspell;
+	}
+
+	/**
 	 * 
 	 */
-	private void findGovernors() {
+	private void logsGovernors() {
 		// test purpose
 		IConfigurationElement[] configArray = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(SPELLENGINE_EXTENSION_POINT_ID);
@@ -129,15 +171,8 @@ public class Hunspell4EclipsePlugin extends AbstractUIPlugin {
 			CLog.logOut(this, "findGovernors",
 					"Class=[%s] Label=[%s] ContentTypeId=[%s]",
 					config.getAttribute("class"), config.getAttribute("label"),
-					config.getAttribute("governsContentTypeId"));
+					config.getAttribute(GOVERNS_CONTENT_TYPE_ID));
 		}
-	}
-
-	/**
-	 * @return
-	 */
-	public Hunspell getHunspell() {
-		return hunspell;
 	}
 
 	/*
@@ -168,7 +203,7 @@ public class Hunspell4EclipsePlugin extends AbstractUIPlugin {
 					wName, wVersion);
 
 			// for test
-			findGovernors();
+			logsGovernors();
 		}
 
 	}

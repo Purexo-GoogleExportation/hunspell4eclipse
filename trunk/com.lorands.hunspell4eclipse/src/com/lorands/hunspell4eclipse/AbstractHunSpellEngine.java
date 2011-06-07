@@ -34,12 +34,13 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 
 	private static final ICompletionProposal[] PROPOSALS_EMPTY_ARRAY = new ICompletionProposal[0];
 
-	private Dictionary dictionary;
 	private int opts;
 
+	private Dictionary pEnglishDictionary;
 	private final int pNbAcceptedProblems;
 	private final int pNbMaxProposals;
 	private final IPreferenceStore preferenceStore;
+	private Dictionary pSelectedDictionary;
 
 	/**
 	 * 
@@ -71,18 +72,19 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	 * @return an instance of SpellingProblem containing a array of proposal(s)
 	 */
 	protected SpellingProblem buildSpellingProblem(IDocument document,
-			IRegion region, String str, int strLength, int distance) {
+			IRegion region, Dictionary aDictionary, String str, int strLength,
+			int distance) {
 
 		SpellingProblem problem = null;
 		final int inOffset = distance;
 
-		// get suggestions
-		final List<String> suggestList = getDictionary().suggest(str);
+		// get suggestions using the Dictionary passed in the params
+		final List<String> suggestList = aDictionary.suggest(str);
 
 		final List<ICompletionProposal> proposalList = new ArrayList<ICompletionProposal>();
 
+		// add one proposal per suggest
 		for (final String suggest : suggestList) {
-
 			proposalList
 					.add(newProposal(document, suggest, inOffset, strLength));
 
@@ -183,7 +185,7 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 		// .getLocale());
 		// bi.setText(docPart);
 		HunspellCheckIterator bi = new HunspellCheckIterator(docPart,
-				wRegionOffset, getDictionary().getLocale());
+				wRegionOffset, getSelectedDictionary().getLocale());
 
 		int wWordIdx = 0;
 		String wWord;
@@ -223,13 +225,41 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	protected boolean checkOneWord(IDocument document, IRegion region,
 			ISpellingProblemCollector collector, String wWord, int wWordDistance) {
 
-		// if the word must be checked and id it is misspelled
-		boolean wWrong = (checkRules(wWord) && getDictionary()
-				.misspelled(wWord));
+		// hypothesis
+		boolean wWrong = false;
+
+		// if the word must be checked and if it is misspelled
+		if (checkRules(wWord)) {
+			wWrong = getSelectedDictionary().misspelled(wWord);
+
+			if (wWrong) {
+				if (hasEnglishDictionary()) {
+					wWrong = getEnglishDictionary().misspelled(wWord);
+					if (wWrong) {
+						// adds spelling problem in the collector using the
+						// selected
+						// dictionary
+						collector.accept(buildSpellingProblem(document, region,
+								getSelectedDictionary(), wWord, wWord.length(),
+								wWordDistance));
+						// adds spelling problem in the collector using the
+						// english dictionary
+						collector.accept(buildSpellingProblem(document, region,
+								getEnglishDictionary(), wWord, wWord.length(),
+								wWordDistance));
+					}
+
+				} else {
+					// adds spelling problem in the collector using the selected
+					// dictionary
+					collector.accept(buildSpellingProblem(document, region,
+							getSelectedDictionary(), wWord, wWord.length(),
+							wWordDistance));
+				}
+			}
+		}
+
 		// adds a new spelling problem in the collector
-		if (wWrong)
-			collector.accept(buildSpellingProblem(document, region, wWord,
-					wWord.length(), wWordDistance));
 
 		// check is true if not wrong
 		return !wWrong;
@@ -290,8 +320,8 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	/**
 	 * @return
 	 */
-	public final Dictionary getDictionary() {
-		return dictionary;
+	public final Dictionary getEnglishDictionary() {
+		return pEnglishDictionary;
 	}
 
 	/**
@@ -316,6 +346,20 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	 */
 	protected int getOptions() {
 		return opts;
+	}
+
+	/**
+	 * @return
+	 */
+	public final Dictionary getSelectedDictionary() {
+		return pSelectedDictionary;
+	}
+
+	/**
+	 * @return true if this engine has an english dictionry
+	 */
+	public final boolean hasEnglishDictionary() {
+		return getEnglishDictionary() != null;
 	}
 
 	/**
@@ -382,8 +426,8 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	/**
 	 * @param dictionary
 	 */
-	public final void setDictionary(Dictionary dictionary) {
-		this.dictionary = dictionary;
+	public final void setEnglishDictionary(Dictionary dictionary) {
+		this.pEnglishDictionary = dictionary;
 	}
 
 	/**
@@ -391,5 +435,12 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	 */
 	public void setOptions(int opts) {
 		this.opts = opts;
+	}
+
+	/**
+	 * @param dictionary
+	 */
+	public final void setSelectedDictionary(Dictionary dictionary) {
+		this.pSelectedDictionary = dictionary;
 	}
 }

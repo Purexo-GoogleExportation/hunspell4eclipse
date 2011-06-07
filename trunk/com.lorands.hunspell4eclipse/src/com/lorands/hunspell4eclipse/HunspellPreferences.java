@@ -20,10 +20,12 @@ import com.stibocatalog.hunspell.CLog;
  */
 public final class HunspellPreferences implements ISpellingPreferenceBlock {
 
-	private final static int DEFAULT_FULL_OPTIONS = 1 + 2 + 4 + 8 + 16; // 31
-	private final static int DEFAULT_PROBLEMS_THRESOLD = 100;
-	private final static int DEFAULT_PROPOSALS_THRESOLD = 10;
+	final static int DEFAULT_ACCEPT_ENGLISH = 0;
+	final static int DEFAULT_FULL_OPTIONS = 1 + 2 + 4 + 8 + 16; // 31
+	final static int DEFAULT_PROBLEMS_THRESOLD = 100;
+	final static int DEFAULT_PROPOSALS_THRESOLD = 10;
 
+	private int pAcceptEnglishWords = DEFAULT_ACCEPT_ENGLISH;
 	private String pDictionaryPath = "";
 	private int pOptions = DEFAULT_FULL_OPTIONS;
 	private int pProblemsThreshold = DEFAULT_PROBLEMS_THRESOLD;
@@ -42,6 +44,13 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 		readAll();
 	}
 
+	/**
+	 * @return
+	 */
+	boolean acceptEngishWords() {
+		return (pAcceptEnglishWords != 0);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -51,8 +60,13 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 	 */
 	@Override
 	public boolean canPerformOk() {
-		return (preferencesComp.getDictionaryPath() != null && !preferencesComp
-				.getDictionaryPath().isEmpty());
+
+		boolean wPerformOk = preferencesComp.canPerformOk();
+
+		if (CLog.on())
+			CLog.logOut(this, "canPerformOk", "canPerformOk=[%b]", wPerformOk);
+
+		return wPerformOk;
 	}
 
 	/*
@@ -67,6 +81,7 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 		this.preferencesComp = new HunspellPrefsComposite(parent, SWT.NULL);
 
 		preferencesComp.setDictionaryPath(pDictionaryPath);
+		preferencesComp.initAcceptEngishWords(pAcceptEnglishWords);
 		preferencesComp.setProblemsThreshold(pProblemsThreshold);
 		preferencesComp.setProposalsThreshold(pProposalsThreshold);
 		intToOpts(pOptions);
@@ -115,6 +130,7 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 	@Override
 	public void initialize(IPreferenceStatusMonitor statusMonitor) {
 		storeAll();
+		preferencesComp.setStatusMonitor(statusMonitor);
 	}
 
 	/**
@@ -160,6 +176,8 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 	@Override
 	public void performOk() {
 		pDictionaryPath = preferencesComp.getDictionaryPath();
+
+		pAcceptEnglishWords = preferencesComp.getAcceptEnglishWords();
 		pProblemsThreshold = preferencesComp.getProblemsThreshold();
 		pProposalsThreshold = preferencesComp.getProposalsThreshold();
 		pOptions = optsToInt();
@@ -183,6 +201,11 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 
 	private void readAll() {
 		pDictionaryPath = readStringValue(Hunspell4EclipsePlugin.SPELLING_DICTPATH);
+
+		pAcceptEnglishWords = readIntValue(
+				Hunspell4EclipsePlugin.SPELLING_ACCEPT_ENGLISH,
+				DEFAULT_ACCEPT_ENGLISH);
+
 		pProblemsThreshold = readIntValue(
 				Hunspell4EclipsePlugin.SPELLING_PROBLEMS_THRESHOLD,
 				DEFAULT_PROBLEMS_THRESOLD);
@@ -243,9 +266,11 @@ public final class HunspellPreferences implements ISpellingPreferenceBlock {
 	/**
 	 * 
 	 */
-	public void storeAll() {
+	private void storeAll() {
 		storeStringValue(Hunspell4EclipsePlugin.SPELLING_DICTPATH,
 				pDictionaryPath);
+		storeIntValue(Hunspell4EclipsePlugin.SPELLING_ACCEPT_ENGLISH,
+				pAcceptEnglishWords);
 		storeIntValue(Hunspell4EclipsePlugin.SPELLING_PROBLEMS_THRESHOLD,
 				pProblemsThreshold);
 		storeIntValue(Hunspell4EclipsePlugin.SPELLING_PROPOSALS_THRESHOLD,
