@@ -1,11 +1,6 @@
 #summary Hunspell4Eclipse news
 #labels Featured
 
-= Help =
-
-The documentation pages embeded in the plug-in :  [http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse/html/help.html] 
-
-
 = New version out: 0.8.5 =
 
 *june 08 2011.*
@@ -20,6 +15,7 @@ Plug-in "com.lorands.hunspell4eclipse"
  * Adds checks in the preferences panel
  * Adopts the same architecture as that used by the JDT, using a CheckIterator based on the the IBM ICU BreakIterator. The CheckIterator enhances the BreakIterator to be able to distinguish the urls or the html tags, or the html entities.
  * Adds a test app and a file to validate the new  HunspellCheckIterator class
+ * Updates and enhances the help documentation. The documentation pages embeded in the plug-in are also available on the air :  [http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse/html/help.html] 
 
 Plug-in "com.lorands.hunspell4eclipse.javaSpell"
  * 0.7.3.qualifier
