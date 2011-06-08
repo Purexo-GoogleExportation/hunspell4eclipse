@@ -8,17 +8,55 @@
 </head>
 
 <body>
-<h1>Install</h1>
-	<p>Installation is trivial: 
-		<ol>
-			<li>Just install the plug-in as usually. (Probably already done that.)</li>
-			<li>Fetch some hunspell (or myspell) dictionaries.</li>
-			<li>Navigate to: Windows - Preferences - General - TextEditors - Spelling</li>
-			<li>Select Hunspell4Eclipse as the spelling engine.</li>
-			<li>Hit browse, select the dictionary you want to use.</li>
-			<li>Done.</li>
-		</ol>
-	</p>
+<p class="logo"><img  src="./images/hunspell4eclipse.png"/></p>
+<h1>Installation and settings</h1>
+	<h2>Install</h2>
+	<ol>
+		<li>Just install the plug-in as usually. (Probably already done that.)</li>
+		
+		<li>Fetch some hunspell (or myspell) dictionaries.<br/>
+		Some URLs:
+		<ul>
+			<li>http://wiki.services.openoffice.org/wiki/Dictionaries
+			<li>https://wiki.mozilla.org/L10n:Dictionaries
+		</ul>
+		</li>
+		<li>Put the dictionaries in a specialized directory (eg. in "/Users/xxx/Library/Spelling" on a Mac).</li>
+	</ol>
+	<h2>Preferences</h2>
+	<ol>
+		<li>Navigate to: Windows - Preferences - General - TextEditors - Spelling</li>
+		
+		<li>Select Hunspell4Eclipse as the spelling engine.<br/>
+		<img src="./images/prefs-hunspell.png"/></li>
+		
+		
+		<li>Hit browse, select the dictionary you want to use.<br/>
+		<img src="./images/prefs-browse.png"/></li>
+		
+		<li>If the directory containing the selected ".dic" file  contains also an english one, 
+		you can select the check-box allowing the english words acceptance..<br/>
+		<img  src="./images/prefs-dictionary.png"/></li>
+		
+		<li>Set the thresolds<br/>
+		<img  src="./images/prefs-thresolds.png"/></li>
+		
+		<li>Set the ignoring options<br/>
+		<img  src="./images/prefs-ignore.png"/></li>
+		
+		<li>Done.</li>
+	</ol>
+	<h3>Errors</h3>
+	<ol>
+		<li>Each time the plug-in starts, if no dictionary file is selected you'll get this message :<br/>
+		<img src="./images/macosx-alert-nodic.png"/></li>
+		<li>If no dictionary is selected<br/>
+		<img src="./images/prefs-error-1.png"/></li>
+		<li>If a not numeric value is set in the problems thresold field.<br/>
+		<img src="./images/prefs-error-2.png"/></li>
+		<li>If a not numeric value is set in the proposals thresold field<br/>
+		<img src="./images/prefs-error-3.png"/></li>
+	</ol>
 
 </body>
 </html>
