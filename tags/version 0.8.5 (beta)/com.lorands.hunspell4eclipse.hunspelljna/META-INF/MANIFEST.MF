@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Hunspell JNA Core
+Bundle-SymbolicName: com.lorands.hunspell4eclipse.hunspelljna;singleton:=true
+Bundle-Version: 1.1.15.qualifier
+Bundle-Activator: com.stibocatalog.hunspell.Hunspell4eclipseJnaPlugin
+Bundle-Vendor: Lóránd Somogyi (lorand dot somogyi at gmail dot com) - http://lorands.com
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
+ J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: lib/jna.jar,
+ .,
+ native-lib/
+Export-Package: com.stibocatalog.hunspell,
+ com.sun.jna,
+ com.sun.jna.ptr,
+ com.sun.jna.win32
+
