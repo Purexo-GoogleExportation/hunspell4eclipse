@@ -1,6 +1,10 @@
 #summary Hunspell4Eclipse news
 #labels Featured
 
+= Help =
+
+The  [http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse/html/help.html|documenttaion] pages embeded in the plug-in.
+
 
 = New version out: 0.8.5 =
 
@@ -78,5 +82,3 @@ The update site remains the same. (http://hunspell4eclipse.googlecode.com/svn/tr
 Just released a new beta version: 0.8.2 
 
 Update site back to normal. (http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse.updatesite)
-
-
