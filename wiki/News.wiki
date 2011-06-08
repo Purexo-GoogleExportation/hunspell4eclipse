@@ -3,7 +3,7 @@
 
 = Help =
 
-The  [http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse/html/help.html|documenttaion] pages embeded in the plug-in.
+The documentation pages embeded in the plug-in :  [http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse/html/help.html] 
 
 
 = New version out: 0.8.5 =
