@@ -4,6 +4,8 @@
 
 Add your content here.
 
+[nspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse/html/install.html]
+
 
 = Details =
 
