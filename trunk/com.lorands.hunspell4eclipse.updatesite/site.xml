@@ -3,7 +3,7 @@
    <description name="Hunspell4Eclipse">
       Hunspell4Eclipse
    </description>
-   <feature url="features/com.lorands.hunspell4eclipse.feature_0.8.4.201105160020.jar" id="com.lorands.hunspell4eclipse.feature" version="0.8.4.201105160020" os="linux,macosx,win32" ws="carbon,cocoa,gtk,win32" arch="ppc,x86,x86_64">
+   <feature url="features/com.lorands.hunspell4eclipse.feature_0.8.5.201106080951.jar" id="com.lorands.hunspell4eclipse.feature" version="0.8.5.201106080951" os="linux,macosx,win32" ws="carbon,cocoa,gtk,win32" arch="ppc,x86,x86_64">
       <category name="com.lorands.hunspell4eclipse.category"/>
    </feature>
    <category-def name="com.lorands.hunspell4eclipse.category" label="Hunspell4Eclipse">

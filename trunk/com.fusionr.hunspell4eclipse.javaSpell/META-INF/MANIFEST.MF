@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Hunspell4Eclipse JavaSpell
 Bundle-SymbolicName: com.lorands.hunspell4eclipse.javaSpell;singleton:=true
-Bundle-Version: 0.7.2.qualifier
+Bundle-Version: 0.7.3.qualifier
 Bundle-Activator: com.lorands.hunspell4eclipse.javaspell.Hunspell4EclipseJavaspellPlugin
 Bundle-Vendor: Lóránd Somogyi
 Require-Bundle: org.eclipse.core.runtime,

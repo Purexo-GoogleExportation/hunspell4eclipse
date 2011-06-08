@@ -1,6 +1,36 @@
 #summary Hunspell4Eclipse news
 #labels Featured
 
+
+= New version out: 0.8.5 =
+
+*june 08 2011.*
+
+Feature "com.lorands.hunspell4eclipse.feature"
+ * 0.8.5.qualifier
+
+Plug-in "com.lorands.hunspell4eclipse"
+ * 0.8.5.qualifier
+ * Accepts english words in texts.
+ * Adds a new preference flag
+ * Adds checks in the preferences panel
+ * Adopts the same architecture as that used by the JDT, using a CheckIterator based on the the IBM ICU BreakIterator. The CheckIterator enhances the BreakIterator to be able to distinguish the urls or the html tags, or the html entities.
+ * Adds a test app and a file to validate the new  HunspellCheckIterator class
+
+Plug-in "com.lorands.hunspell4eclipse.javaSpell"
+ * 0.7.3.qualifier
+ * Campaign of renaming. Starts the name of all the classes with the prefix "JavaHunspell"
+ * Adds the class "JavaHunspellingProblem" to specialize the class "HunspellingProblem", to be able to deliver some "WordCorrectionProposals" in the response of the method "getProposals()". This allows the the jdt quickfixprocessor to add the proposals at the right place in the list of quickfix
+
+ Plug-in "com.lorands.hunspell4eclipse.hunspelljna"
+ * 1.1.15.qualifier
+ * Cleans the cache of dictionnaries when the plug-in is stoped
+ * Adds the url of the web site of Flemming in the "readme" file
+ * Corrects some methods of the CTools class
+ * Adds capabilities in the CPaltform class
+ * Renames the class of the test application
+
+
 = New version out: 0.8.4 =
 
 *mai 16 2011.*

@@ -2,7 +2,7 @@
 <feature
       id="com.lorands.hunspell4eclipse.feature"
       label="Hunspell4Eclipse"
-      version="0.8.4.qualifier"
+      version="0.8.5.qualifier"
       provider-name="Lóránd Somogyi (http://lorands.com)"
       os="linux,macosx,win32"
       ws="carbon,cocoa,gtk,win32"
