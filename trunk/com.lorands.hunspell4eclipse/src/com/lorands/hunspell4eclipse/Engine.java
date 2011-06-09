@@ -18,6 +18,7 @@ import org.eclipse.ui.texteditor.spelling.ISpellingEngine;
 import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
 
+import com.lorands.hunspell4eclipse.i18n.Messages;
 import com.stibocatalog.hunspell.CLog;
 import com.stibocatalog.hunspell.CTools;
 import com.stibocatalog.hunspell.Hunspell;
@@ -33,13 +34,13 @@ import com.stibocatalog.hunspell.Hunspell.Dictionary;
  */
 public class Engine implements ISpellingEngine {
 
-	private static String DICTIONARY_DOESNT_EXIST = "The dictionary [%s] doesn't exist. Verify the hunspell4Eclipe plug-in preferences.";
+	private static String DICTIONARY_DOESNT_EXIST_KEY = "engine.dict.doesnt.exist.mess";
 
 	// attention declared in plugin.xml
 	public final static String ENGINE_ID = "com.lorands.hunspell4eclipse.engine";
 
-	private static String NO_DICTIONARY_SELECTED_INFO = "Pleases select a dictionray in Preferences > General > Editors > Text Editors > Spelling.";
-	private static String NO_DICTIONARY_SELECTED_TITLE = "No dictionary selected";
+	private static String NO_DICTIONARY_SELECTED_INFO_KEY = "engine.dict.please.select.mess";
+	private static String NO_DICTIONARY_SELECTED_TITLE_KEY = "engine.dict.not.selected.mess";
 
 	/**
 	 * @param aDictionaryFile
@@ -128,17 +129,21 @@ public class Engine implements ISpellingEngine {
 
 		if (!wPrefs.hasDictionaryPath()) {
 
+			Messages wMessages = Messages.getInstance();
+			String wTitle = wMessages
+					.getString(NO_DICTIONARY_SELECTED_TITLE_KEY);
+			String wInfoText = wMessages
+					.getString(NO_DICTIONARY_SELECTED_INFO_KEY);
+
 			// log in StdErr
-			CLog.logErr(this, CLog.LIB_CONSTRUCTOR, "%s\näs",
-					NO_DICTIONARY_SELECTED_TITLE, NO_DICTIONARY_SELECTED_INFO);
+			CLog.logErr(this, CLog.LIB_CONSTRUCTOR, "%s\näs", wTitle, wInfoText);
 
 			// ask the user !
 			if (Hunspell4EclipsePlugin.getDefault().getWorkbench()
 					.getActiveWorkbenchWindow() != null)
 				MessageDialog.openError(Hunspell4EclipsePlugin.getDefault()
 						.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						NO_DICTIONARY_SELECTED_TITLE,
-						NO_DICTIONARY_SELECTED_INFO);
+						wTitle, wInfoText);
 
 			initOk = false;
 		} else {
@@ -147,8 +152,9 @@ public class Engine implements ISpellingEngine {
 			File wSelectedDictFile = new File(wSelectedDictPath);
 
 			if (!wSelectedDictFile.exists())
-				throw new FileNotFoundException(String.format(
-						DICTIONARY_DOESNT_EXIST, wSelectedDictPath));
+				throw new FileNotFoundException(String.format(Messages
+						.getInstance().getString(DICTIONARY_DOESNT_EXIST_KEY,
+								wSelectedDictPath)));
 
 			final Hunspell hunspell = Hunspell4EclipsePlugin.getDefault()
 					.getHunspell();

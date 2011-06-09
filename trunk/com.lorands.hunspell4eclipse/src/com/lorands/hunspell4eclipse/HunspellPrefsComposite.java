@@ -1,5 +1,7 @@
 package com.lorands.hunspell4eclipse;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.layout.PixelConverter;
@@ -15,6 +17,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor;
 
+import com.lorands.hunspell4eclipse.i18n.Messages;
 import com.stibocatalog.hunspell.CLog;
 
 /**
@@ -30,6 +33,9 @@ import com.stibocatalog.hunspell.CLog;
  */
 public class HunspellPrefsComposite extends Composite {
 
+	private final static boolean ALREADY_ENGLISH_DICT = false;
+	private final static String DICT_FILTER = "*.dic";
+	private final static boolean NO_ENGLISH_DICT = true;
 	private int pAcceptEnglishWords = 0;
 	private Button pButton = null;
 	private HunspellPrefsCompositeOptions pCompositeOptions;
@@ -39,12 +45,16 @@ public class HunspellPrefsComposite extends Composite {
 	private Label pLabelDictionary;
 	private Label pLabelProblemsTreshold;
 	private Label pLabelProposalsTreshold;
+	private final Messages pMessages;
 	final PixelConverter pPixelConverter = new PixelConverter(this);
 	private int pProblemsThreshold = 0;
 	private int pProposalsThreshold = 0;
 	private IPreferenceStatusMonitor pStatusMonitor;
+
 	private Text pTextDictonaryPath;
+
 	private Text pTextProblemsThreshold;
+
 	private Text pTextProposalsThreshold;
 
 	/**
@@ -53,6 +63,7 @@ public class HunspellPrefsComposite extends Composite {
 	 */
 	public HunspellPrefsComposite(Composite parent, int style) {
 		super(parent, style);
+		pMessages = Messages.getInstance();
 		initialize();
 	}
 
@@ -85,8 +96,8 @@ public class HunspellPrefsComposite extends Composite {
 	 */
 	private String chooseFileDictionary() {
 		final FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
-		fd.setFilterExtensions(new String[] { "*.dic" });
-		fd.setText("Select an hunspell dictionary file ( *.dic).");
+		fd.setFilterExtensions(new String[] { DICT_FILTER });
+		fd.setText(pMessages.getString("prefs.browse.title", DICT_FILTER));
 		final String path = fd.open();
 		return path;
 	}
@@ -94,13 +105,17 @@ public class HunspellPrefsComposite extends Composite {
 	/**
 	 * 
 	 */
-	void desableAcceptEngishWords() {
+	void desableAcceptEngishWords(boolean aNoEnglishDict) {
 		pEngishCheckBox.setSelection(false);
 		pEngishCheckBox.setEnabled(false);
 		setAcceptEngishWords(HunspellPreferences.DEFAULT_ACCEPT_ENGLISH);
 
-		pLabelAcceptEnglishWords
-				.setText("No english dictionary available near the selected one.");
+		String wMess = (aNoEnglishDict) ? pMessages
+				.getString("prefs.group.dictionary.mess.no.english.dict")
+				: pMessages
+						.getString("prefs.group.dictionary.mess.english.dict.selected");
+
+		pLabelAcceptEnglishWords.setText(wMess);
 	}
 
 	/**
@@ -110,16 +125,16 @@ public class HunspellPrefsComposite extends Composite {
 		if (hasStatusMonitor()) {
 			if (!hasDictionaryPath())
 				pStatusMonitor.statusChanged(new Status(IStatus.ERROR,
-						Hunspell4EclipsePlugin.PLUGIN_ID,
-						"No dictionary file selected."));
+						Hunspell4EclipsePlugin.PLUGIN_ID, pMessages
+								.getString("prefs.check.no.dict")));
 			else if (!hasProblemsThreshold())
 				pStatusMonitor.statusChanged(new Status(IStatus.ERROR,
-						Hunspell4EclipsePlugin.PLUGIN_ID,
-						"Not an integer  value for the problems threshold."));
+						Hunspell4EclipsePlugin.PLUGIN_ID, pMessages
+								.getString("prefs.check.problems.limit")));
 			else if (!hasProposalsThreshold())
 				pStatusMonitor.statusChanged(new Status(IStatus.ERROR,
-						Hunspell4EclipsePlugin.PLUGIN_ID,
-						"Not an integer value for the proposals threshold."));
+						Hunspell4EclipsePlugin.PLUGIN_ID, pMessages
+								.getString("prefs.check.proposals.limit")));
 			else
 				pStatusMonitor.statusChanged(Status.OK_STATUS);
 		}
@@ -202,12 +217,14 @@ public class HunspellPrefsComposite extends Composite {
 		GridLayout gridLayoutDictPath = new GridLayout(3, false);
 
 		Group wGroupDictionary = new Group(this, SWT.NONE);
-		wGroupDictionary.setText("Dictionary");
+		wGroupDictionary.setText(pMessages
+				.getString("prefs.group.dictionary.title"));
 		wGroupDictionary.setLayout(gridLayoutDictPath);
 		wGroupDictionary.setLayoutData(newGridDataGroup());
 
 		pLabelDictionary = new Label(wGroupDictionary, SWT.NONE);
-		pLabelDictionary.setText("Dictionary file path (*.dic file)");
+		pLabelDictionary.setText(pMessages
+				.getString("prefs.group.dictionary.label.path"));
 		pLabelDictionary.setLayoutData(newGridDataLabel(50));
 
 		pTextDictonaryPath = new Text(wGroupDictionary, SWT.BORDER);
@@ -216,7 +233,8 @@ public class HunspellPrefsComposite extends Composite {
 		pTextDictonaryPath.setEditable(false);
 
 		pButton = new Button(wGroupDictionary, SWT.NONE);
-		pButton.setText("Browse...");
+		pButton.setText(pMessages
+				.getString("prefs.group.dictionary.label.browse"));
 		pButton.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
 			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
@@ -227,7 +245,8 @@ public class HunspellPrefsComposite extends Composite {
 		});
 
 		pEngishCheckBox = new Button(wGroupDictionary, SWT.CHECK);
-		pEngishCheckBox.setText("accept also english words");
+		pEngishCheckBox.setText(pMessages
+				.getString("prefs.group.dictionary.label.accept"));
 		pEngishCheckBox.setSelection(true);
 		pEngishCheckBox
 				.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
@@ -271,13 +290,14 @@ public class HunspellPrefsComposite extends Composite {
 		GridLayout gridLayoutThresolds = new GridLayout(2, false);
 
 		Group wGroupThresold = new Group(this, SWT.FILL);
-		wGroupThresold.setText("Thresolds");
+		wGroupThresold.setText(pMessages
+				.getString("prefs.group.thresolds.title"));
 		wGroupThresold.setLayoutData(newGridDataGroup());
 		wGroupThresold.setLayout(gridLayoutThresolds);
 
 		pLabelProblemsTreshold = new Label(wGroupThresold, SWT.NONE);
-		pLabelProblemsTreshold
-				.setText("Maximum number of problems reported per file:");
+		pLabelProblemsTreshold.setText(pMessages
+				.getString("prefs.group.thresolds.label.max.problem"));
 		pLabelProblemsTreshold.setLayoutData(newGridDataLabel(50));
 
 		pTextProblemsThreshold = new Text(wGroupThresold, SWT.BORDER);
@@ -294,8 +314,8 @@ public class HunspellPrefsComposite extends Composite {
 				});
 
 		pLabelProposalsTreshold = new Label(wGroupThresold, SWT.NONE);
-		pLabelProposalsTreshold
-				.setText("Maximum number of correction proposals:");
+		pLabelProposalsTreshold.setText(pMessages
+				.getString("prefs.group.thresolds.label.max.proposals"));
 		pLabelProposalsTreshold.setLayoutData(newGridDataLabel(50));
 
 		pTextProposalsThreshold = new Text(wGroupThresold, SWT.BORDER);
@@ -316,7 +336,6 @@ public class HunspellPrefsComposite extends Composite {
 	 * 
 	 */
 	private void initialize() {
-		// setSize(new Point(286, 261));
 
 		// one column
 		setLayout(new GridLayout(1, true));
@@ -396,6 +415,10 @@ public class HunspellPrefsComposite extends Composite {
 		return wGridData;
 	}
 
+	/**
+	 * @param aNbCharacterWidth
+	 * @return
+	 */
 	private GridData newGridDataLabel(int aNbCharacterWidth) {
 		GridData wGridData = newGridData(aNbCharacterWidth);
 		return wGridData;
@@ -417,7 +440,11 @@ public class HunspellPrefsComposite extends Composite {
 
 		if (!hasDictionaryPath()
 				|| !Engine.hasEnglishDictionaryInSameDir(pDictionaryPath))
-			desableAcceptEngishWords();
+			desableAcceptEngishWords(NO_ENGLISH_DICT);
+		else if (pDictionaryPath.endsWith(File.separator + "en")
+				|| pDictionaryPath.contains(File.separator + "en_"))
+			desableAcceptEngishWords(ALREADY_ENGLISH_DICT);
+
 		else
 			enableAcceptEngishWords();
 

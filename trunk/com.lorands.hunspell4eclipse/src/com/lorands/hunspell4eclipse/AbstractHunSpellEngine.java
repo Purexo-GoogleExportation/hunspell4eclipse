@@ -18,6 +18,7 @@ import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
+import com.lorands.hunspell4eclipse.i18n.Messages;
 import com.stibocatalog.hunspell.CLog;
 import com.stibocatalog.hunspell.Hunspell.Dictionary;
 
@@ -30,7 +31,7 @@ import com.stibocatalog.hunspell.Hunspell.Dictionary;
  */
 public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 
-	private final static String PROBLEM_MESSAGE_FORMAT = "Hunspell: the word '%s' is not correctly spelled ( %s proposal%s)";
+	private final static String PROBLEM_MESSAGE_KEY = "spell.problem.mess";
 
 	private static final ICompletionProposal[] PROPOSALS_EMPTY_ARRAY = new ICompletionProposal[0];
 
@@ -39,6 +40,7 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	private Dictionary pEnglishDictionary;
 	private final int pNbAcceptedProblems;
 	private final int pNbMaxProposals;
+	private final String pProblemMessage;
 	private final IPreferenceStore preferenceStore;
 	private Dictionary pSelectedDictionary;
 
@@ -46,8 +48,11 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	 * 
 	 */
 	public AbstractHunSpellEngine() {
-		this.preferenceStore = Hunspell4EclipsePlugin.getDefault()
+		preferenceStore = Hunspell4EclipsePlugin.getDefault()
 				.getPreferenceStore();
+
+		// get the problem message from the resource
+		pProblemMessage = Messages.getInstance().getString(PROBLEM_MESSAGE_KEY);
 
 		pNbAcceptedProblems = getJdtUiIntPreference(
 				Hunspell4EclipsePlugin.SPELLING_PROBLEMS_THRESHOLD, 100);
@@ -95,8 +100,9 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 		int wNbProposal = proposalList.size();
 
 		problem = newSpellingProblem(document, inOffset, strLength,
-				String.format(PROBLEM_MESSAGE_FORMAT, str, wNbProposal,
-						(wNbProposal > 1) ? "s" : ""),
+				String.format(pProblemMessage, str, wNbProposal,
+						(wNbProposal > 1) ? "s" : "", aDictionary.getLocale()
+								.getDisplayLanguage()),
 				proposalList.toArray(PROPOSALS_EMPTY_ARRAY));
 
 		// diagnose (activated if the "hunspell.log.on"

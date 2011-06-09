@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.util.Locale;
 
 import com.lorands.hunspell4eclipse.HunspellCheckIterator;
+import com.lorands.hunspell4eclipse.i18n.Messages;
 import com.stibocatalog.hunspell.CLog;
 import com.stibocatalog.hunspell.CPlatform;
 import com.stibocatalog.hunspell.CTools;
@@ -112,10 +113,15 @@ public class HunspellTestMain {
 				Locale.ENGLISH);
 
 		while (wHCI.hasNext()) {
-
 			println("word=[%s]", wHCI.next());
-
 		}
+
+		println("TEST=[%s]",
+				Messages.getInstance().getString("test.key", "str", 100, true));
+
+		println("TEST=[%s]",
+				Messages.getInstance().getString(
+						"engine.dict.please.select.mess"));
 
 		if (CLog.on())
 			CLog.logOut(this, LIB_RUN, "End");

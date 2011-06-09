@@ -12,6 +12,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
+import com.lorands.hunspell4eclipse.i18n.Messages;
+
 /**
  * @author Lorand Somogyi
  * 
@@ -25,6 +27,7 @@ class HunspellPrefsCompositeOptions extends Composite {
 	private Button checkBox3;
 	private Button checkBox4;
 	private Group group1;
+	private final Messages pMessages;
 
 	/**
 	 * @param parent
@@ -32,6 +35,8 @@ class HunspellPrefsCompositeOptions extends Composite {
 	 */
 	public HunspellPrefsCompositeOptions(Composite parent, int style) {
 		super(parent, style);
+		pMessages = Messages.getInstance();
+
 		initialize();
 	}
 
@@ -60,23 +65,28 @@ class HunspellPrefsCompositeOptions extends Composite {
 		gridData.grabExcessVerticalSpace = true;
 		gridData.verticalAlignment = GridData.FILL;
 		group1 = new Group(this, SWT.NONE);
-		group1.setText("Options");
+		group1.setText(pMessages.getString("prefs.group.options.title"));
 		group1.setLayout(gridLayout1);
 		group1.setLayoutData(gridData);
 		checkBox = new Button(group1, SWT.CHECK);
-		checkBox.setText("ignore words with digits");
+		checkBox.setText(pMessages
+				.getString("prefs.group.options.label.ignore.digits"));
 		checkBox.setSelection(true);
 		checkBox1 = new Button(group1, SWT.CHECK);
-		checkBox1.setText("Ignore mixed case words");
+		checkBox1.setText(pMessages
+				.getString("prefs.group.options.label.ignore.mixed"));
 		checkBox1.setSelection(true);
 		checkBox2 = new Button(group1, SWT.CHECK);
-		checkBox2.setText("Ignore upper case words");
+		checkBox2.setText(pMessages
+				.getString("prefs.group.options.label.ignore.uppercase"));
 		checkBox2.setSelection(true);
 		checkBox3 = new Button(group1, SWT.CHECK);
-		checkBox3.setText("Ignore single letters");
+		checkBox3.setText(pMessages
+				.getString("prefs.group.options.label.ignore.single"));
 		checkBox3.setSelection(true);
 		checkBox4 = new Button(group1, SWT.CHECK);
-		checkBox4.setText("Ignore words with non-letters");
+		checkBox4.setText(pMessages
+				.getString("prefs.group.options.label.ignore.notletter"));
 		checkBox4.setSelection(true);
 	}
 
