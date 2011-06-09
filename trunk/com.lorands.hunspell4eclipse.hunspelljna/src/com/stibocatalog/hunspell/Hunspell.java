@@ -317,8 +317,7 @@ public class Hunspell {
 				return "hunspell-win-x86-32";
 
 			if (CPlatform.is64Bits()) {
-				// Note: No bindings exist for this yet (no JNA support).
-				// return "hunspell-win-x86-64";
+				return "hunspell-win-x86-64";
 			}
 
 		}
