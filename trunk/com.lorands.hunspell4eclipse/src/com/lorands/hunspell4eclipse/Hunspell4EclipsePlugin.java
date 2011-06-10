@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2011 lorands.com, L—r‡nd Somogyi
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    L—r‡nd Somogyi (lorands.com) - initial API and implementation
+ *    Olivier Gattaz (isandlaTech) - improvments
+ *******************************************************************************/
 package com.lorands.hunspell4eclipse;
 
 import org.eclipse.core.runtime.CoreException;
@@ -43,7 +54,7 @@ public class Hunspell4EclipsePlugin extends AbstractUIPlugin {
 	 * @param id
 	 * @return
 	 */
-	public static AbstractHunSpellEngine findEngine(String id) {
+	public static HunspellEngineBase findEngine(String id) {
 		IConfigurationElement[] configArray = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(SPELLENGINE_EXTENSION_POINT_ID);
 
@@ -77,7 +88,7 @@ public class Hunspell4EclipsePlugin extends AbstractUIPlugin {
 				if (wGovernsContentTypeId != null
 						&& wGovernsContentTypeId.equals(id)) {
 					try {
-						final AbstractHunSpellEngine engine = (AbstractHunSpellEngine) config
+						final HunspellEngineBase engine = (HunspellEngineBase) config
 								.createExecutableExtension("class");
 
 						// diagnose (activated if the "hunspell.log.on" system
@@ -139,7 +150,8 @@ public class Hunspell4EclipsePlugin extends AbstractUIPlugin {
 	 */
 	public static boolean isMyDescriptor(
 			SpellingEngineDescriptor aSpellingEngineDescriptor) {
-		return Engine.ENGINE_ID.equals(aSpellingEngineDescriptor.getId());
+		return SpellingEngineImpl.ENGINE_ID.equals(aSpellingEngineDescriptor
+				.getId());
 	}
 
 	private Hunspell hunspell;

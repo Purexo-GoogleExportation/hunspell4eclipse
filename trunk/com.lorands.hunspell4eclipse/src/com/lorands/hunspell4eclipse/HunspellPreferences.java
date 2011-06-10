@@ -1,6 +1,14 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2011 lorands.com, L—r‡nd Somogyi
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    L—r‡nd Somogyi (lorands.com) - initial API and implementation
+ *    Olivier Gattaz (isandlaTech) - improvments
+ *******************************************************************************/
 package com.lorands.hunspell4eclipse;
 
 import org.eclipse.jface.preference.IPreferenceStore;

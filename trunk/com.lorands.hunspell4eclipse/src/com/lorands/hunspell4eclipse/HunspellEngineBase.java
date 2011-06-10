@@ -1,6 +1,14 @@
-/**
+/*******************************************************************************
+ * Copyright (c) 2011 lorands.com, L—r‡nd Somogyi
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- */
+ * Contributors:
+ *    L—r‡nd Somogyi (lorands.com) - initial API and implementation
+ *    Olivier Gattaz (isandlaTech) - improvments
+ *******************************************************************************/
 package com.lorands.hunspell4eclipse;
 
 import java.util.ArrayList;
@@ -29,7 +37,7 @@ import com.stibocatalog.hunspell.Hunspell.Dictionary;
  * @date 28/04/2011 (dd/mm/yy)
  * 
  */
-public abstract class AbstractHunSpellEngine implements ISpellingEngine {
+public abstract class HunspellEngineBase implements ISpellingEngine {
 
 	private final static String PROBLEM_MESSAGE_KEY = "spell.problem.mess";
 
@@ -47,7 +55,7 @@ public abstract class AbstractHunSpellEngine implements ISpellingEngine {
 	/**
 	 * 
 	 */
-	public AbstractHunSpellEngine() {
+	public HunspellEngineBase() {
 		preferenceStore = Hunspell4EclipsePlugin.getDefault()
 				.getPreferenceStore();
 

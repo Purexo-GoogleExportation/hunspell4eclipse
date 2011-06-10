@@ -1,6 +1,14 @@
-/**
+/*******************************************************************************
+ * Copyright (c) 2011 lorands.com, L—r‡nd Somogyi
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- */
+ * Contributors:
+ *    L—r‡nd Somogyi (lorands.com) - initial API and implementation
+ *    Olivier Gattaz (isandlaTech) - improvments
+ *******************************************************************************/
 package com.lorands.hunspell4eclipse;
 
 import java.io.File;
@@ -32,12 +40,12 @@ import com.stibocatalog.hunspell.Hunspell.Dictionary;
  * @author Olivier Gattaz < olivier dot gattaz at isandlatech dot com >
  * @date 28/04/2011 (dd/mm/yy)
  */
-public class Engine implements ISpellingEngine {
+public class SpellingEngineImpl implements ISpellingEngine {
 
 	private static String DICTIONARY_DOESNT_EXIST_KEY = "engine.dict.doesnt.exist.mess";
 
 	// attention declared in plugin.xml
-	public final static String ENGINE_ID = "com.lorands.hunspell4eclipse.engine";
+	public final static String ENGINE_ID = "com.lorands.hunspell4eclipse.spellingengineimpl";
 
 	private static String NO_DICTIONARY_SELECTED_INFO_KEY = "engine.dict.please.select.mess";
 	private static String NO_DICTIONARY_SELECTED_TITLE_KEY = "engine.dict.not.selected.mess";
@@ -60,14 +68,14 @@ public class Engine implements ISpellingEngine {
 	}
 
 	/**
-	 * Return the first english dictionary found in the given directory .
-	 * <p>
-	 * Exemple :
+	 * Return the first english dictionary found in the given directory
+	 * according the list of priority.
 	 * <ul>
-	 * <li>en_GB
-	 * <li>en_US
-	 * <li>en_ZA
-	 * <li>en
+	 * <li>en_US = 2
+	 * <li>en_GB = 1
+	 * <li>en_ZA = 0
+	 * <li>en_.. = 0
+	 * <li>en = 0
 	 * </ul>
 	 * 
 	 * @param aDirectory
@@ -92,17 +100,39 @@ public class Engine implements ISpellingEngine {
 		});
 
 		if (CLog.on())
-			CLog.logOut(Engine.class, "calcEnglishDictPrefix",
+			CLog.logOut(SpellingEngineImpl.class, "calcEnglishDictPrefix",
 					"EnglishDictPaths=[%s]",
 					CTools.arrayToString(wEnglishDictPaths, ","));
+		// no english dict
+		if (wEnglishDictPaths.length == 0)
+			return null;
 
-		// return the first one
+		// scoring
+		int wHightScore = 0;
+		int wHightScoreIdx = -1;
+		int wIdx = 0;
 		for (String wEnglishDictPath : wEnglishDictPaths) {
-			return new File(aDirectory, wEnglishDictPath);
+			if (wEnglishDictPath.endsWith("en_US.dic") && wHightScore < 2) {
+				wHightScore = 2;
+				wHightScoreIdx = wIdx;
+			} else if (wEnglishDictPath.endsWith("en_GB.dic")
+					&& wHightScore < 1) {
+				wHightScore = 1;
+				wHightScoreIdx = wIdx;
+			} else if (wHightScoreIdx < 0) {
+				wHightScoreIdx = wIdx;
+			}
+			wIdx++;
 		}
 
-		// no english dict
-		return null;
+		File wFound = new File(aDirectory, wEnglishDictPaths[wHightScoreIdx]);
+
+		if (CLog.on())
+			CLog.logOut(SpellingEngineImpl.class, "calcEnglishDictPrefix",
+					"Better EnglishDict found=[%s]", wFound.getName());
+
+		// return the better dictionary found
+		return wFound;
 	}
 
 	/**
@@ -126,7 +156,8 @@ public class Engine implements ISpellingEngine {
 	 * @throws FileNotFoundException
 	 * 
 	 */
-	public Engine() throws FileNotFoundException, UnsupportedEncodingException {
+	public SpellingEngineImpl() throws FileNotFoundException,
+			UnsupportedEncodingException {
 
 		// read the preferences
 		HunspellPreferences wPrefs = new HunspellPreferences();
@@ -211,7 +242,7 @@ public class Engine implements ISpellingEngine {
 					getContentTypeInfos(0, contentType));
 
 		// gets the right spell engine according the passed content-type
-		AbstractHunSpellEngine spellEngine = findContentProvider(contentType);
+		HunspellEngineBase spellEngine = findContentProvider(contentType);
 
 		// configures the spell engine
 		spellEngine.setSelectedDictionary(pSelectedDictionary);
@@ -247,12 +278,12 @@ public class Engine implements ISpellingEngine {
 	 *            the content-type given in the check context
 	 * @return
 	 */
-	private AbstractHunSpellEngine findContentProvider(IContentType contentType) {
+	private HunspellEngineBase findContentProvider(IContentType contentType) {
 		/*
 		 * org.eclipse.core.runtime.text org.eclipse.jdt.core.javaSource
 		 * org.eclipse.core.runtime.xml
 		 */
-		AbstractHunSpellEngine engine = Hunspell4EclipsePlugin
+		HunspellEngineBase engine = Hunspell4EclipsePlugin
 				.findEngine(contentType.getId());
 		if (engine != null)
 			return engine;
@@ -261,7 +292,7 @@ public class Engine implements ISpellingEngine {
 		if (baseType != null)
 			return findContentProvider(baseType);
 
-		return new SimpleTextEngine();
+		return new HunspellEngineSimpleText();
 	}
 
 	/**

@@ -1,24 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
+<!--
+/*******************************************************************************
+ * Copyright (c) 2011 lorands.com, Lóránd Somogyi
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Lóránd Somogyi (lorands.com) - initial API and implementation
+ *    Olivier Gattaz (isandlaTech) - improvments
+ *******************************************************************************/
+-->
 <plugin>
-   <extension-point id="com.lorands.hunspell4eclipse.content.governor" name="contentGorvernor" schema="schema/com.lorands.hunspell4eclipse.content.governor.exsd"/>
+
+	<extension-point 
+		id="com.lorands.hunspell4eclipse.content.governor" 
+   		name="contentGorvernor"
+   		schema="schema/com.lorands.hunspell4eclipse.content.governor.exsd"/>
+   		
    <extension
-         point="org.eclipse.ui.workbench.texteditor.spellingEngine">
-         <!-- attention : endig id declared in the class com.lorands.hunspell4eclipse.Engine -->
-      <engine
-            class="com.lorands.hunspell4eclipse.Engine"
+		point="org.eclipse.ui.workbench.texteditor.spellingEngine">
+         <!-- attention : the "id" of this engine is defined as a constant in the class : "com.lorands.hunspell4eclipse.SpellingEngineImpl" -->
+		<engine
+			class="com.lorands.hunspell4eclipse.SpellingEngineImpl"
             default="true"
-            id="com.lorands.hunspell4eclipse.engine"
+            id="com.lorands.hunspell4eclipse.spellingengineimpl"
             label="HunSpell4Eclipse"
             preferencesClass="com.lorands.hunspell4eclipse.HunspellPreferences">
-      </engine>
-   </extension>
-   <extension
-         point="org.eclipse.help.toc">
-      <toc
-            file="toc.xml"
-            primary="true">
-      </toc>
-   </extension>
+		</engine>
+	</extension>
+
+	<extension
+		point="org.eclipse.help.toc">
+		<toc
+			file="toc.xml"
+			primary="true">
+		</toc>
+	</extension>
 
 </plugin>

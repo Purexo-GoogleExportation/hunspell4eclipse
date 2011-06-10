@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2011 isandlaTech, Olivier Gattaz
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Olivier Gattaz (isandlaTech) - initial API and implementation
+ *******************************************************************************/
 package com.lorands.hunspell4eclipse;
 
 //import java.text.BreakIterator;
@@ -64,11 +74,11 @@ public class HunspellCheckIterator implements IHunspellCheckIterator {
 
 	private boolean fIsIgnoringSingleLetters;
 
-	/** The last token */
-	protected String fLastToken = null;
-
 	/** The content of the region */
 	protected final String pContent;
+
+	/** The last returned token */
+	protected String pLastReturnedToken = null;
 
 	/** The predecessor break */
 	private int pOffsetCurrent = 0;
@@ -82,7 +92,18 @@ public class HunspellCheckIterator implements IHunspellCheckIterator {
 	/** The successor break */
 	protected int pOffsetSuccessor = 0;
 
-	/** The word iterator */
+	/** The previous token */
+	protected String pPreviousToken = null;
+
+	/**
+	 * The word break iterator.
+	 * 
+	 * http://icu-project.org/apiref/icu4j/com/ibm/icu/text/
+	 * RuleBasedBreakIterator.html
+	 * 
+	 * http://userguide.icu-project.org/boundaryanalysis
+	 * 
+	 * */
 	private final BreakIterator pWordBreakIterator;
 
 	/**
@@ -175,6 +196,10 @@ public class HunspellCheckIterator implements IHunspellCheckIterator {
 		return pOffsetSuccessor + pOffsetRegion - 1;
 	}
 
+	protected String getLastReturnedToken() {
+		return this.pLastReturnedToken;
+	}
+
 	/**
 	 * @return
 	 */
@@ -185,9 +210,16 @@ public class HunspellCheckIterator implements IHunspellCheckIterator {
 	/**
 	 * @return
 	 */
-	private String getTokenNext() {
+	protected String getTokenNext() {
 		return (pOffsetSuccessor != BreakIterator.DONE) ? pContent.substring(
 				pOffsetCurrent, pOffsetSuccessor) : null;
+	}
+
+	/**
+	 * @return
+	 */
+	protected String getTokenPrevious() {
+		return pPreviousToken;
 	}
 
 	/*
@@ -283,7 +315,7 @@ public class HunspellCheckIterator implements IHunspellCheckIterator {
 	 * @return <code>true</code> if the last token is in the given array
 	 */
 	protected final boolean isToken(final String[] tags) {
-		return isToken(fLastToken, tags);
+		return isToken(pLastReturnedToken, tags);
 	}
 
 	/**
@@ -331,8 +363,7 @@ public class HunspellCheckIterator implements IHunspellCheckIterator {
 		String token = nextToken();
 		while (token == null && pOffsetSuccessor != BreakIterator.DONE)
 			token = nextToken();
-
-		fLastToken = token;
+		pLastReturnedToken = token;
 
 		return token;
 	}
@@ -351,6 +382,8 @@ public class HunspellCheckIterator implements IHunspellCheckIterator {
 	protected String nextToken() {
 		String token = null;
 
+		pPreviousToken = getTokenCurrent();
+
 		pOffsetPrevious = pOffsetCurrent;
 
 		nextBreak();
@@ -358,6 +391,12 @@ public class HunspellCheckIterator implements IHunspellCheckIterator {
 		if (pOffsetCurrent - pOffsetPrevious > 0) {
 
 			if (CLog.on()) {
+				String wLRT = getLastReturnedToken();
+				if (wLRT == null)
+					wLRT = "null";
+				String wWord0 = getTokenPrevious();
+				if (wWord0 == null)
+					wWord0 = "null";
 				String wWord1 = getTokenCurrent();
 				if ("\n".equals(wWord1))
 					wWord1 = "\\n";
@@ -369,9 +408,9 @@ public class HunspellCheckIterator implements IHunspellCheckIterator {
 				CLog.logOut(
 						this,
 						"nextToken",
-						"OffsetPrevious=[%d] OffsetCurrent=[%d] OffsetSuccessor=[%d] TokCur=[%s] TokNext=[%s]",
+						"OffsetPrevious=[%d] OffsetCurrent=[%d] OffsetSuccessor=[%d] Toklast=[%s] TokPrev=[%s]  TokCur=[%s] TokNext=[%s]",
 						pOffsetPrevious, pOffsetCurrent, pOffsetSuccessor,
-						wWord1, wWord2);
+						wLRT, wWord0, wWord1, wWord2);
 			}
 
 			// s'il y a un suivant , que l'on a "<" ˆ l'offset courant et que le
