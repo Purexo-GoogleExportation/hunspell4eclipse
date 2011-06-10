@@ -31,7 +31,7 @@ import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
-import com.lorands.hunspell4eclipse.AbstractHunSpellEngine;
+import com.lorands.hunspell4eclipse.HunspellEngineBase;
 import com.lorands.hunspell4eclipse.ICompletionProposalCreator;
 import com.stibocatalog.hunspell.CLog;
 
@@ -43,7 +43,7 @@ import com.stibocatalog.hunspell.CLog;
  * 
  */
 @SuppressWarnings({ "restriction" })
-public final class JavaHunspellEngine extends AbstractHunSpellEngine {
+public final class JavaHunspellEngine extends HunspellEngineBase {
 
 	/**
 	 * @author ogattaz
