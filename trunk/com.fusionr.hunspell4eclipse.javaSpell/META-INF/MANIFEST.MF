@@ -4,7 +4,7 @@ Bundle-Name: Hunspell4Eclipse JavaSpell
 Bundle-SymbolicName: com.lorands.hunspell4eclipse.javaSpell;singleton:=true
 Bundle-Version: 0.7.3.qualifier
 Bundle-Activator: com.lorands.hunspell4eclipse.javaspell.Hunspell4EclipseJavaspellPlugin
-Bundle-Vendor: Lóránd Somogyi
+Bundle-Vendor: Lóránd Somogyi (lorand dot somogyi at gmail dot com) - http://lorands.com
 Require-Bundle: org.eclipse.core.runtime,
  com.lorands.hunspell4eclipse.hunspelljna,
  com.lorands.hunspell4eclipse,

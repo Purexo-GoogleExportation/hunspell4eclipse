@@ -13,8 +13,8 @@
  *******************************************************************************/
 -->
 <feature
-      id="com.lorands.hunspell4eclipse.feature"
-      label="Hunspell4Eclipse"
+      id="com.lorands.hunspell4eclipse.javaSpell.feature"
+      label="Hunspell4Eclipse for java"
       version="0.8.5.qualifier"
       provider-name="Lóránd Somogyi (http://lorands.com)"
       os="linux,macosx,win32"
@@ -22,8 +22,9 @@
       arch="ppc,x86,x86_64">
 
    <description url="http://code.google.com/p/hunspell4eclipse/">
-      Hunspell4Eclipse is an eclipse plug-in, that integrates Hunspell
-into Eclipse’s Spell Checking Service.
+      Hunspell4Eclipse for java is an eclipse plug-in, that allows
+the usage of the Hunspell4Eclipse spelling service in the java
+editor.
    </description>
 
    <copyright url="http://lorands.com">
@@ -34,11 +35,6 @@ into Eclipse’s Spell Checking Service.
       This software is lincensed under Eclipse Public Lincese v 1.0
 (http://www.eclipse.org/legal/epl-v10.html), but includes software
 that is licensed under LGPL (http://www.gnu.org/copyleft/lesser.html).
-Included software:
-* Hunspell JNA Java bindings by Flemming Frandsen: 
-http://dren.dk/hunspell.html - published under LGPL.
-* JNA 
-http://jna.java.net/ - published under LGPL.
    </license>
 
    <url>
@@ -46,23 +42,8 @@ http://jna.java.net/ - published under LGPL.
       <discovery label="Hunspell4Eclipse help" url="http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse/html/help.html"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.jdt.ui"/>
-   </requires>
-
    <plugin
-         id="com.lorands.hunspell4eclipse"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.lorands.hunspell4eclipse.hunspelljna"
+         id="com.lorands.hunspell4eclipse.javaSpell"
          download-size="0"
          install-size="0"
          version="0.0.0"
