@@ -60,6 +60,9 @@ public class Engine implements ISpellingEngine {
 	}
 
 	/**
+	 * Return the first english dictionary found in the given directory .
+	 * <p>
+	 * Exemple :
 	 * <ul>
 	 * <li>en_GB
 	 * <li>en_US
@@ -125,10 +128,12 @@ public class Engine implements ISpellingEngine {
 	 */
 	public Engine() throws FileNotFoundException, UnsupportedEncodingException {
 
+		// read the preferences
 		HunspellPreferences wPrefs = new HunspellPreferences();
 
 		if (!wPrefs.hasDictionaryPath()) {
 
+			// get the messages
 			Messages wMessages = Messages.getInstance();
 			String wTitle = wMessages
 					.getString(NO_DICTIONARY_SELECTED_TITLE_KEY);
@@ -194,37 +199,52 @@ public class Engine implements ISpellingEngine {
 			return;
 		}
 
-		// find spell engine for contet
+		// gets the content-type of the current context (eg.
+		// "org.eclipse.jdt.core.javaSource",
+		// "org.eclipse.core.runtime.text",...)
 		IContentType contentType = context.getContentType();
 
 		// diagnose (activated if the "hunspell.log.on" system
 		// property is defined).
 		if (CLog.on())
-			CLog.logOut(this, "check", "SpellingContext.getContentType=[%s]",
-					traverseContentType(0, contentType));
+			CLog.logOut(this, "check", "SpellingContext. ContentType=[%s]",
+					getContentTypeInfos(0, contentType));
 
+		// gets the right spell engine according the passed content-type
 		AbstractHunSpellEngine spellEngine = findContentProvider(contentType);
 
+		// configures the spell engine
 		spellEngine.setSelectedDictionary(pSelectedDictionary);
 		spellEngine.setEnglishDictionary(pEnglishDictionary);
-
 		spellEngine.setOptions(Hunspell4EclipsePlugin.getDefault()
 				.getPreferenceStore()
 				.getInt(Hunspell4EclipsePlugin.SPELLING_OPTIONS));
-		spellEngine.check(document, regions, context, collector, monitor);
 
+		// executes the spell checking
+		spellEngine.check(document, regions, context, collector, monitor);
 	}
 
 	/**
-	 * Find spell engine or return default "SimpleTextEngine".
+	 * Find spell engine according the content-type or return default
+	 * "SimpleTextEngine".
 	 * <p>
 	 * Try to find most suitable spell engine, which means if not found for the
 	 * given content type try it's parent, and so on.
 	 * <p>
 	 * If none found, will return an instance "SimpleTextEngine"which would mean
 	 * use the default text one.
+	 * <p>
+	 * 
+	 * Some examples of content-type :
+	 * 
+	 * <pre>
+	 *  txt file  => ContentType=[0=org.eclipse.core.runtime.text()(txt)]
+	 *  rest file => ContentType=[0=ReSTEditor.restSource()(rst),1=org.eclipse.core.runtime.text()(txt)]
+	 *  java file => ContentType=[0=org.eclipse.jdt.core.javaSource()(java),1=org.eclipse.core.runtime.text()(txt)]
+	 * </pre>
 	 * 
 	 * @param contentType
+	 *            the content-type given in the check context
 	 * @return
 	 */
 	private AbstractHunSpellEngine findContentProvider(IContentType contentType) {
@@ -248,17 +268,31 @@ public class Engine implements ISpellingEngine {
 	 * @param level
 	 *            the current level.
 	 * @param contentType
+	 *            the content-type to dump
 	 * @return a string containing the dump of the chain of contentTypes
 	 */
-	private String traverseContentType(int level, IContentType contentType) {
+	private String getContentTypeInfos(int level, IContentType contentType) {
 		StringBuilder wSB = new StringBuilder();
 		wSB.append(level);
-		wSB.append("=");
+		wSB.append('=');
 		wSB.append(contentType.getId());
+		wSB.append('(');
+		wSB.append(CTools.arrayToString(
+				contentType
+						.getFileSpecs(org.eclipse.core.runtime.content.IContentType.FILE_NAME_SPEC),
+				","));
+		wSB.append(')');
+		wSB.append('(');
+		wSB.append(CTools.arrayToString(
+				contentType
+						.getFileSpecs(org.eclipse.core.runtime.content.IContentType.FILE_EXTENSION_SPEC),
+				","));
+		wSB.append(')');
+
 		IContentType baseType = contentType.getBaseType();
 		if (baseType != null) {
 			wSB.append(',');
-			wSB.append(traverseContentType(level + 1, baseType));
+			wSB.append(getContentTypeInfos(level + 1, baseType));
 		}
 		return wSB.toString();
 	}
