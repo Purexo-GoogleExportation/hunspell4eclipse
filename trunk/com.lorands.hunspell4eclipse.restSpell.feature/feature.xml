@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*******************************************************************************
+ * Copyright (c) 2011 isandlaTech, Olivier Gattaz
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Olivier Gattaz (isandlaTech) - initial API and implementation
+ *******************************************************************************/
+-->
+<feature
+      id="com.lorands.hunspell4eclipse.restSpell.feature"
+      label="Hunspell4Eclipse for ReST"
+      version="0.8.5.qualifier"
+      provider-name="Lóránd Somogyi (http://lorands.com)"
+      os="linux,macosx,win32"
+      ws="cocoa,gtk,win32"
+      arch="ppc,x86,x86_64">
+
+   <description url="http://code.google.com/p/hunspell4eclipse/">
+      Hunspell4Eclipse for ReST is an eclipse plug-in, that allows
+the usage of the Hunspell4Eclipse spelling service in the ReST
+editor.
+   </description>
+
+   <copyright url="http://lorands.com">
+      © Lóránd Somogyi (lorand dot somogyi at gmail dot com) - http://lorands.com
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      This software is lincensed under Eclipse Public Lincese v 1.0
+(http://www.eclipse.org/legal/epl-v10.html), but includes software
+that is licensed under LGPL (http://www.gnu.org/copyleft/lesser.html).
+   </license>
+
+   <url>
+      <update label="hunspell4eclipse updatesite" url="http://hunspell4eclipse.googlecode.com/svn/trunk/com.lorands.hunspell4eclipse.updatesite/"/>
+      <discovery label="New discovery site" url="http://newsite"/>
+   </url>
+
+   <plugin
+         id="com.lorands.hunspell4eclipse.javaSpell"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

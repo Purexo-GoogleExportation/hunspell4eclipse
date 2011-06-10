@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: com.lorands.hunspell4eclipse.restSpell; singleton:=true
+Bundle-Version: 0.8.5.qualifier
+Bundle-Activator: com.lorands.hunspell4eclipse.restspell.RestHunspellPlugin
+Bundle-Vendor: Lóránd Somogyi (lorand dot somogyi at gmail dot com) - http://lorands.com
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.workbench,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.jface,
+ org.eclipse.jface.text,
+ com.lorands.hunspell4eclipse.hunspelljna,
+ com.lorands.hunspell4eclipse,
+ ReSTEditor
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
