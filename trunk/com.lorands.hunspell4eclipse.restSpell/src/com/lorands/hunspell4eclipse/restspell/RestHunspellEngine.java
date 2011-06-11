@@ -22,8 +22,8 @@ import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
 import org.isandlatech.plugins.rest.parser.RestLanguage;
 
-import com.lorands.hunspell4eclipse.HunspellEngineBase;
 import com.lorands.hunspell4eclipse.HunspellCheckIterator;
+import com.lorands.hunspell4eclipse.HunspellEngineBase;
 import com.lorands.hunspell4eclipse.ICompletionProposalCreator;
 import com.lorands.hunspell4eclipse.IHunspellCheckIterator;
 import com.stibocatalog.hunspell.CLog;
@@ -109,8 +109,6 @@ public final class RestHunspellEngine extends HunspellEngineBase {
 	public static class RestProposalCreator implements
 			ICompletionProposalCreator {
 
-		private static final int relevance = 1;
-
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -138,8 +136,6 @@ public final class RestHunspellEngine extends HunspellEngineBase {
 			// nothing
 		}
 	}
-
-	private static final IRegion[] EMPTY_REGION_ARRAY = new IRegion[0];
 
 	private static final String[] SPHINX_DIRECTIVES_PARAMS = { "alt",
 			"maxdepth" };
