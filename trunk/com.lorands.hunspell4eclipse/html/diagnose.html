@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="./images/style.css" type="text/css"
+	media="screen" />
+<title>Install</title>
+</head>
+
+<body>
+	<p class="logo">
+		<img src="./images/hunspell4eclipse.png" />
+	</p>
+	<h1>Howto trace the activityof Hunspell4Eclipse</h1>
+	
+	<p>To facilitate our debugging tasks when you report us an issue, it would be great if you 
+attach a trace file to the bug repport.</p>
+	<p>This page presents the steps you must follow to produce easily a trace file:</p>
+	<ol>
+		<li>Configure Eclipse</li>
+		<li>Launch Eclipse and configure the window of the console</li>
+		<li>Open your workspace</li>
+		<li>Reproduce the issue you detected</li>
+		<li>Select and copy</li>
+		<li>Paste in your text editor and save</li>
+	</ol>
+
+	<h2>Configure Eclipse</h2>
+	<p>Add the two lines in the "eclipse.ini" file locate in the same
+		folder as the Eclipse launcher</p>
+	<pre style="font-size:12pt">
+-consolelog
+-Dhunspell.log.on=yes
+	</pre>
+	<img src="./images/diagnose-eclipse-ini.png" />
+
+	<h2>Launch eclipse and configure the window of the console</h2>
+	<p>Set 220 columns, 5000 lines and the fast edition capability.</p>
+	<img src="./images/diagnose-wincmd-configuration.png" />
+	<img src="./images/diagnose-wincmd-options.png" />
+
+	<p>Don't forget to associate these settings to the link which opens this console.</p>
+	<img src="./images/diagnose-wincmd-foralias.png" />
+
+	<h2>Open your workspace</h2>
+	<img src="./images/diagnose-open.png" />
+
+	<h2>Reproduce the problem you detected<</h2>
+	<img src="./images/diagnose-trace.png" />
+
+	<h2>Select and copy the trace lines</h2>
+	<img src="./images/diagnose-select.png" />
+
+	<h2>Paste in your text editor and save</h2>
+	<img src="./images/diagnose-save.png" />
+
+</body>
+</html>
