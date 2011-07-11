@@ -15,7 +15,7 @@
 <feature
       id="com.lorands.hunspell4eclipse.javaSpell.feature"
       label="Hunspell4Eclipse for java"
-      version="0.8.5.qualifier"
+      version="0.8.6.qualifier"
       provider-name="Lóránd Somogyi (http://lorands.com)"
       os="linux,macosx,win32"
       ws="cocoa,gtk,win32"

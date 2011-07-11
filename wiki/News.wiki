@@ -1,6 +1,54 @@
 #summary Hunspell4Eclipse news
 #labels Featured
 
+
+= New version out: 0.8.6 =
+
+*july 11 2011.*
+
+Feature "com.lorands.hunspell4eclipse.feature"
+ * 0.8.6.qualifier
+ * Corrects one english typo
+ * Adds Hungarian and Serbian message properties
+ * Corrects the toc and the "howto trace" page of the embedded html documentation.
+
+Plug-in "com.lorands.hunspell4eclipse"
+ * 0.8.6.qualifier
+ * Updates and enhances the help documentation
+ * Adds windows 64 bits support (hunspell-win-x86-64.dll).
+ * Suppresses the dependancy to the jdt packages.
+ * Corrects the dependencies to the IBM ICU packages
+ * Adds i18n support (english, french) 
+ * Renames classes
+ * Improves the SpellingEngineImpl to select the better english dictionary if needed. The prefered order is : en_US,en_GB,en_...
+ * Adds copyright header in the sources
+ * sets the svn property "svn:mime-type" to the value "text/html" for all the pages of the help documentation 
+ 
+Plug-in "com.lorands.hunspell4eclipse.hunspelljna"
+ * 1.1.16.qualifier
+
+Feature "com.lorands.hunspell4eclipse.javaSpell.feature"
+ * 0.8.6.qualifier
+ * NEW feature
+ * Adds a specific feature for the availability of the hunspell spelling service in the java editor. This allows to break the dependancies to the jdt packages.
+
+Plug-in "com.lorands.hunspell4eclipse.javaSpell"
+ * 0.8.6.qualifier
+  * Changes the super class of JavaHunspellEngine due to the rename of the class  "com.lorands.hunspell4eclipse.HunspellEngineBase"
+ 
+
+
+Feature "com.lorands.hunspell4eclipse.RestSpell.feature"
+ * 0.8.6.qualifier
+ * NEW feature 
+
+Plug-in "com.lorands.hunspell4eclipse.RestSpell"
+ * 0.8.6.qualifier
+ * NEW plug-in which propose and specialized spelling engine for the RestEditor. This spelling engine doesn't check all the key words of the directives of Sphinx or reStructuredText 
+ 
+
+
+
 = New version out: 0.8.5 =
 
 *june 08 2011.*

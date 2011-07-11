@@ -12,7 +12,7 @@
 	<p class="logo">
 		<img src="./images/hunspell4eclipse.png" />
 	</p>
-	<h1>Howto trace the activityof Hunspell4Eclipse</h1>
+	<h1>Howto trace the activity of the Hunspell4Eclipse plug-in</h1>
 	
 	<p>To facilitate our debugging tasks when you report us an issue, it would be great if you 
 attach a trace file to the bug repport.</p>
@@ -27,12 +27,18 @@ attach a trace file to the bug repport.</p>
 	</ol>
 
 	<h2>Configure Eclipse</h2>
-	<p>Add the two lines in the "eclipse.ini" file locate in the same
-		folder as the Eclipse launcher</p>
-	<pre style="font-size:12pt">
+	<p>Add two lines in the "eclipse.ini" file which is located in the same
+		folder as the Eclipse launcher.</p>
+		<ul>
+		<li>Add the first argument as
+		<pre style="font-size:12pt">
 -consolelog
+	</pre></li>
+			<li>Set the jvm property "hunspell.log.on" to activate the logging tool of the huspell4Eclipse plug-in
+		<pre style="font-size:12pt">
 -Dhunspell.log.on=yes
-	</pre>
+	</pre></li>
+		</ul>
 	<img src="./images/diagnose-eclipse-ini.png" />
 
 	<h2>Launch eclipse and configure the window of the console</h2>

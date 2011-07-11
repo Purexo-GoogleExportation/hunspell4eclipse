@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Hunspell JNA Core
 Bundle-SymbolicName: com.lorands.hunspell4eclipse.hunspelljna;singleton:=true
-Bundle-Version: 1.1.15.qualifier
+Bundle-Version: 1.1.16.qualifier
 Bundle-Activator: com.stibocatalog.hunspell.Hunspell4eclipseJnaPlugin
 Bundle-Vendor: Lóránd Somogyi (lorand dot somogyi at gmail dot com) - http://lorands.com
 Require-Bundle: org.eclipse.ui,
