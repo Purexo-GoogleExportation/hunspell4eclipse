@@ -6,13 +6,13 @@ This plug-in is capable of spell checking with any hunspell/myspell dictionary o
 This plug-in has NO embedded dictionary ! 
 Today, this plug-in is in beta stage.
    </description>
-   <feature url="features/com.lorands.hunspell4eclipse.feature_0.8.6.201107111215.jar" id="com.lorands.hunspell4eclipse.feature" version="0.8.6.201107111215" os="linux,macosx,win32" ws="cocoa,gtk,win32" arch="ppc,x86,x86_64">
+   <feature url="features/com.lorands.hunspell4eclipse.javaSpell.feature_0.8.7.201205281622.jar" id="com.lorands.hunspell4eclipse.javaSpell.feature" version="0.8.7.201205281622" os="linux,macosx,win32" ws="cocoa,gtk,win32" arch="ppc,x86,x86_64">
       <category name="com.lorands.hunspell4eclipse.category"/>
    </feature>
-   <feature url="features/com.lorands.hunspell4eclipse.javaSpell.feature_0.8.6.201107111215.jar" id="com.lorands.hunspell4eclipse.javaSpell.feature" version="0.8.6.201107111215" os="linux,macosx,win32" ws="cocoa,gtk,win32" arch="ppc,x86,x86_64">
+   <feature url="features/com.lorands.hunspell4eclipse.restSpell.feature_0.8.7.201205281622.jar" id="com.lorands.hunspell4eclipse.restSpell.feature" version="0.8.7.201205281622" os="linux,macosx,win32" ws="cocoa,gtk,win32" arch="ppc,x86,x86_64">
       <category name="com.lorands.hunspell4eclipse.category"/>
    </feature>
-   <feature url="features/com.lorands.hunspell4eclipse.restSpell.feature_0.8.6.201107111215.jar" id="com.lorands.hunspell4eclipse.restSpell.feature" version="0.8.6.201107111215" os="linux,macosx,win32" ws="cocoa,gtk,win32" arch="ppc,x86,x86_64">
+   <feature url="features/com.lorands.hunspell4eclipse.feature_0.8.7.201205281622.jar" id="com.lorands.hunspell4eclipse.feature" version="0.8.7.201205281622" os="linux,macosx,win32" ws="cocoa,gtk,win32" arch="ppc,x86,x86_64">
       <category name="com.lorands.hunspell4eclipse.category"/>
    </feature>
    <category-def name="com.lorands.hunspell4eclipse.category" label="Hunspell4Eclipse">

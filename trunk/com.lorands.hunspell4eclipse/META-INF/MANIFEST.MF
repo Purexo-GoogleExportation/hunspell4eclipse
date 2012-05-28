@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: com.lorands.hunspell4eclipse;singleton:=true
-Bundle-Version: 0.8.6.qualifier
+Bundle-Version: 0.8.7.qualifier
 Bundle-Activator: com.lorands.hunspell4eclipse.Hunspell4EclipsePlugin
 Bundle-Vendor: Lóránd Somogyi (lorand dot somogyi at gmail dot com) - http://lorands.com
 Require-Bundle: org.eclipse.ui,

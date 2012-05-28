@@ -2,6 +2,21 @@
 #labels Featured
 
 
+= New version out: 0.8.7 =
+
+*mai 28 2012.*
+
+Plug-in "com.lorands.hunspell4eclipse.hunspelljna"
+ * 1.1.17.qualifier
+ * adopts JNA 3.4.0
+
+Feature "com.lorands.hunspell4eclipse.feature"
+ * 0.8.6.qualifier
+ * remove the dependency to "jdt.ui" 
+   * re-compute the dependencies of the the feature : break the dependency to the JDT 
+ 
+ 
+
 = New version out: 0.8.6 =
 
 *july 11 2011.*
